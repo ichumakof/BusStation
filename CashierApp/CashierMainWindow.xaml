@@ -1,0 +1,77 @@
+﻿<Window x:Class="CashierApp.CashierMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="Рабочее место кассира" Height="600" Width="900" WindowStartupLocation="CenterScreen">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхняя панель: приветствие и дата -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" VerticalAlignment="Center" Margin="0,0,0,10">
+            <TextBlock Text="Кассир: " FontWeight="Bold" VerticalAlignment="Center"/>
+            <TextBlock x:Name="tbCashierName" Margin="6,0,20,0" VerticalAlignment="Center"/>
+            <TextBlock Text="Дата:" VerticalAlignment="Center" Margin="8,0,6,0"/>
+            <DatePicker x:Name="dpDate" SelectedDate="{x:Static sys:DateTime.Now}" />
+        </StackPanel>
+
+        <!-- Поиск города/остановки -->
+        <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,0,0,10">
+            <TextBlock Text="Город / Остановка назначения" Margin="0,0,0,4"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBox x:Name="tbCitySearch" Grid.Row="0" Height="28" Padding="6"
+                         VerticalContentAlignment="Center"
+                         TextChanged="tbCitySearch_TextChanged"
+                         KeyDown="tbCitySearch_KeyDown"/>
+
+                <!-- Список подсказок -->
+                <Border Grid.Row="1" BorderBrush="#CCC" BorderThickness="1" Background="White" 
+                        Visibility="Collapsed" x:Name="borderSuggestions" MaxHeight="180">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ListBox x:Name="lbSuggestions" SelectionChanged="lbSuggestions_SelectionChanged"
+                                 MouseLeftButtonUp="lbSuggestions_MouseLeftButtonUp"
+                                 KeyboardNavigation.TabNavigation="None"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </StackPanel>
+
+        <!-- Список рейсов -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="icTrips" >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#DDD" BorderThickness="0,0,0,1" Padding="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="120"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding RouteTitle}"/>
+                                    <TextBlock Foreground="#666" Text="{Binding ExtraInfo}" FontSize="12"/>
+                                </StackPanel>
+
+                                <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                           FontSize="14" FontWeight="SemiBold" Text="{Binding PriceText}"/>
+
+                                <!--<TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                           FontSize="14" Text="{Binding DepartureTime}"/>-->
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Window>

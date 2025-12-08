@@ -1,0 +1,98 @@
+﻿<Window x:Class="AdminApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Автовокзал - Панель администратора" 
+        Height="500" Width="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Стиль для кнопок меню -->
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#388E3C"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 1. Шапка -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="АДМИНИСТРАТОР: " 
+                          Foreground="White" FontWeight="Bold"/>
+                <TextBlock x:Name="tbAdminName" 
+                          Text="Иванов И.И."
+                          Foreground="White" FontWeight="Bold" Margin="5,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- 2. Основная область -->
+        <Grid Grid.Row="1" Background="#f5f5f5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 2.1 Меню слева -->
+            <Border Grid.Column="0" Background="#ffffff" BorderBrush="#ddd" BorderThickness="0,0,1,0">
+                <StackPanel Margin="10">
+                    <TextBlock Text="ГЛАВНОЕ МЕНЮ" 
+                              FontWeight="Bold" 
+                              FontSize="16"
+                              Margin="0,0,0,30"
+                              HorizontalAlignment="Center"/>
+
+                    <!-- Только 3 кнопки -->
+                    <Button x:Name="btnScheduleGenerator" 
+                           Content="📅 Генератор расписания"
+                           Style="{StaticResource MenuButtonStyle}"
+                           Click="btnScheduleGenerator_Click"/>
+
+                    <Button x:Name="btnReports" 
+                           Content="📊 Отчеты по продажам"
+                           Style="{StaticResource MenuButtonStyle}"
+                           Click="btnReports_Click"/>
+
+                    <Button x:Name="btnTrips" 
+                           Content="🚌 Управление рейсами"
+                           Style="{StaticResource MenuButtonStyle}"
+                           Click="btnTrips_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 2.2 Область контента -->
+            <Border Grid.Column="1" Padding="30">
+                <StackPanel VerticalAlignment="Center" 
+                           HorizontalAlignment="Center">
+
+                    <TextBlock Text="🚌" 
+                              FontSize="48" 
+                              HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Панель управления автовокзалом" 
+                              FontSize="22" 
+                              FontWeight="Bold"
+                              Margin="0,20,0,10"
+                              HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Выберите пункт меню слева для работы" 
+                              FontSize="16"
+                              HorizontalAlignment="Center"/>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
