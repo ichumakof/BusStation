@@ -68,29 +68,36 @@ namespace DAL.Repositories
                 var minDate = departureDateTimes.Min().Date;
                 var maxDate = departureDateTimes.Max().Date;
 
-                HashSet<DateTime> existingDateSet = new HashSet<DateTime>();
+                HashSet<DateTime> existingDateTimes = new HashSet<DateTime>();
                 if (skipExisting)
                 {
-                    var existingDates = ctx.Trips
+                    // Получаем существующие DepartureDateTime в запрошенном диапазоне (учитываем полное время)
+                    var existing = ctx.Trips
                         .Where(t => t.RouteID == routeId &&
                                     DbFunctions.TruncateTime(t.DepartureDateTime) >= minDate &&
                                     DbFunctions.TruncateTime(t.DepartureDateTime) <= maxDate)
-                        .Select(t => DbFunctions.TruncateTime(t.DepartureDateTime).Value)
+                        .Select(t => t.DepartureDateTime)
                         .ToList();
 
-                    existingDateSet = new HashSet<DateTime>(existingDates.Select(d => d.Date));
+                    // Округляем до секунд, чтобы избежать мелких расхождений в миллисекундах
+                    existingDateTimes = new HashSet<DateTime>(existing.Select(d => new DateTime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second)));
                 }
 
                 double resolvedPrice = price.HasValue ? price.Value : 0.0;
 
                 var toCreate = departureDateTimes
-                    .Where(dt => !skipExisting || !existingDateSet.Contains(dt.Date))
+                    .Where(dt =>
+                    {
+                        if (!skipExisting) return true;
+                        var key = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+                        return !existingDateTimes.Contains(key);
+                    })
                     .Select(dt => new Trips
                     {
                         RouteID = routeId,
                         DepartureDateTime = dt,
                         ArrivalDateTime = dt.AddMinutes(durationMin),
-                        Status = "Planned",
+                        Status = "Ok",
                         BusID = resolvedBusId,
                         DriverID = resolvedDriverId,
                         Price = resolvedPrice,

@@ -186,7 +186,7 @@ namespace CashierApp
                 {
                     TripID = x.TripID,
                     RouteTitle = $"Иваново - {x.ArrivalName}",
-                    ExtraInfo = $"Маршрут #{x.RouteID}",
+                    ExtraInfo = $"Отправление - {x.FormattedDeparture}",
                     Price = x.Price,
                     PriceText = $"{(x.Price):F2} руб.",
                     DepartureTime = x.DepartureDateTime.ToString("HH:mm")
