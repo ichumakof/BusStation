@@ -1,43 +1,39 @@
 ﻿using AdminApp.Views;
+using AdminApp.ViewModels;
 using BLL.Interfaces;
 using BLL.Services;
+using System;
 using System.Windows;
 
 namespace AdminApp
 {
     public partial class MainWindow : Window
     {
+        private readonly MainWindowViewModel _vm;
         private readonly IScheduleService _scheduleService = new ScheduleService();
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // Устанавливаем имя администратора
-            if (App.CurrentUser != null)
-            {
-                tbAdminName.Text = App.CurrentUser.FullName;
-                this.Title = $"Автовокзал - Администратор: {App.CurrentUser.FullName}";
-            }
+            _vm = new MainWindowViewModel();
+            DataContext = _vm;
+
+            // Подписка на событие открытия генератора — View откроет модальное окно
+            _vm.RequestOpenScheduleGenerator += Vm_RequestOpenScheduleGenerator;
+            _vm.RequestShowMessage += Vm_RequestShowMessage;
         }
 
-        // 1. Генератор расписания
-        private void btnScheduleGenerator_Click(object sender, RoutedEventArgs e)
+        private void Vm_RequestShowMessage(object sender, MessageRequestEventArgs e)
+        {
+            MessageBox.Show(e.Message, e.Caption, e.Button, e.Icon);
+        }
+
+        private void Vm_RequestOpenScheduleGenerator(object sender, EventArgs e)
         {
             var scheduleWindow = new ScheduleGeneratorView(_scheduleService);
             scheduleWindow.Owner = this;
             scheduleWindow.ShowDialog();
-        }
-
-        // 2. Отчеты
-        private void btnReports_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Модуль отчетов в разработке", "Информация");
-        }
-
-        // 3. Управление рейсами
-        private void btnTrips_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Модуль управления рейсами в разработке", "Информация");
         }
     }
 }

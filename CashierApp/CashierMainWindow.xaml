@@ -3,6 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Title="Рабочее место кассира" Height="600" Width="900" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -13,9 +17,9 @@
         <!-- Верхняя панель: приветствие и дата -->
         <StackPanel Orientation="Horizontal" Grid.Row="0" VerticalAlignment="Center" Margin="0,0,0,10">
             <TextBlock Text="Кассир: " FontWeight="Bold" VerticalAlignment="Center"/>
-            <TextBlock x:Name="tbCashierName" Margin="6,0,20,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="tbCashierName" Margin="6,0,20,0" VerticalAlignment="Center" Text="{Binding CashierName}"/>
             <TextBlock Text="Дата:" VerticalAlignment="Center" Margin="8,0,6,0"/>
-            <DatePicker x:Name="dpDate" SelectedDate="{x:Static sys:DateTime.Now}" />
+            <DatePicker x:Name="dpDate" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" />
         </StackPanel>
 
         <!-- Поиск города/остановки -->
@@ -29,15 +33,22 @@
 
                 <TextBox x:Name="tbCitySearch" Grid.Row="0" Height="28" Padding="6"
                          VerticalContentAlignment="Center"
-                         TextChanged="tbCitySearch_TextChanged"
-                         KeyDown="tbCitySearch_KeyDown"/>
+                         Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Down" Command="{Binding KeyDownDownCommand}" />
+                        <KeyBinding Key="Enter" Command="{Binding KeyDownEnterCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
 
                 <!-- Список подсказок -->
                 <Border Grid.Row="1" BorderBrush="#CCC" BorderThickness="1" Background="White" 
-                        Visibility="Collapsed" x:Name="borderSuggestions" MaxHeight="180">
+                        Visibility="{Binding AreSuggestionsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        x:Name="borderSuggestions" MaxHeight="180">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <ListBox x:Name="lbSuggestions" SelectionChanged="lbSuggestions_SelectionChanged"
-                                 MouseLeftButtonUp="lbSuggestions_MouseLeftButtonUp"
+                        <ListBox x:Name="lbSuggestions"
+                                 ItemsSource="{Binding Suggestions}"
+                                 DisplayMemberPath="CityName"
+                                 SelectedItem="{Binding SelectedSuggestion, Mode=TwoWay}"
                                  KeyboardNavigation.TabNavigation="None"/>
                     </ScrollViewer>
                 </Border>
@@ -46,7 +57,7 @@
 
         <!-- Список рейсов -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-            <ItemsControl x:Name="icTrips" >
+            <ItemsControl x:Name="icTrips" ItemsSource="{Binding Trips}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border BorderBrush="#DDD" BorderThickness="0,0,0,1" Padding="8">

@@ -7,6 +7,10 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -32,7 +36,9 @@
                     <ComboBox x:Name="cbRoutes" 
                              DisplayMemberPath="RouteInfo"
                              Height="30"
-                             Margin="0,5,0,0"/>
+                             Margin="0,5,0,0"
+                             ItemsSource="{Binding Routes}"
+                             SelectedItem="{Binding SelectedRoute, Mode=TwoWay}" />
                 </StackPanel>
             </GroupBox>
 
@@ -51,30 +57,32 @@
                     </Grid.ColumnDefinitions>
                     <!-- Дата начала -->
                     <Label Grid.Row="0" Grid.Column="0" Content="Дата начала:" Width="100" VerticalAlignment="Center"/>
-                    <DatePicker x:Name="dpStartDate" Grid.Row="0" Grid.Column="1" Width="150" SelectedDate="{x:Static sys:DateTime.Today}" Margin="0,0,10,0"/>
+                    <DatePicker x:Name="dpStartDate" Grid.Row="0" Grid.Column="1" Width="150" SelectedDate="{Binding StartDate, Mode=TwoWay}" Margin="0,0,10,0"/>
                     <!-- Время отправления -->
                     <Label Grid.Row="0" Grid.Column="2" Content="Время отправления:" Margin="10,0,5,0" VerticalAlignment="Center"/>
                     <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
-                        <ComboBox x:Name="cbHour" Width="60" Margin="0,0,5,0"/>
+                        <ComboBox x:Name="cbHour" Width="60" Margin="0,0,5,0"
+                                  ItemsSource="{Binding HourList}" SelectedItem="{Binding SelectedHour, Mode=TwoWay}"/>
                         <TextBlock Text=":" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                        <ComboBox x:Name="cbMinute" Width="60"/>
+                        <ComboBox x:Name="cbMinute" Width="60"
+                                  ItemsSource="{Binding MinuteList}" SelectedItem="{Binding SelectedMinute, Mode=TwoWay}"/>
                     </StackPanel>
                     <!-- Дата окончания -->
                     <Label Grid.Row="1" Grid.Column="0" Content="Дата окончания:" Width="100" VerticalAlignment="Center"/>
-                    <DatePicker x:Name="dpEndDate" Grid.Row="1" Grid.Column="1" Width="150" SelectedDate="{x:Static sys:DateTime.Today}"/>
+                    <DatePicker x:Name="dpEndDate" Grid.Row="1" Grid.Column="1" Width="150" SelectedDate="{Binding EndDate, Mode=TwoWay}"/>
                 </Grid>
             </GroupBox>
 
             <!-- 3. Дни недели -->
             <GroupBox Header="Дни недели" Margin="0,0,0,10">
                 <WrapPanel Margin="10">
-                    <CheckBox x:Name="chkMonday" Content="Понедельник" Margin="5" IsChecked="True"/>
-                    <CheckBox x:Name="chkTuesday" Content="Вторник" Margin="5" IsChecked="True"/>
-                    <CheckBox x:Name="chkWednesday" Content="Среда" Margin="5" IsChecked="True"/>
-                    <CheckBox x:Name="chkThursday" Content="Четверг" Margin="5" IsChecked="True"/>
-                    <CheckBox x:Name="chkFriday" Content="Пятница" Margin="5" IsChecked="True"/>
-                    <CheckBox x:Name="chkSaturday" Content="Суббота" Margin="5"/>
-                    <CheckBox x:Name="chkSunday" Content="Воскресенье" Margin="5"/>
+                    <CheckBox x:Name="chkMonday" Content="Понедельник" Margin="5" IsChecked="{Binding Monday, Mode=TwoWay}"/>
+                    <CheckBox x:Name="chkTuesday" Content="Вторник" Margin="5" IsChecked="{Binding Tuesday, Mode=TwoWay}"/>
+                    <CheckBox x:Name="chkWednesday" Content="Среда" Margin="5" IsChecked="{Binding Wednesday, Mode=TwoWay}"/>
+                    <CheckBox x:Name="chkThursday" Content="Четверг" Margin="5" IsChecked="{Binding Thursday, Mode=TwoWay}"/>
+                    <CheckBox x:Name="chkFriday" Content="Пятница" Margin="5" IsChecked="{Binding Friday, Mode=TwoWay}"/>
+                    <CheckBox x:Name="chkSaturday" Content="Суббота" Margin="5" IsChecked="{Binding Saturday, Mode=TwoWay}"/>
+                    <CheckBox x:Name="chkSunday" Content="Воскресенье" Margin="5" IsChecked="{Binding Sunday, Mode=TwoWay}"/>
                 </WrapPanel>
             </GroupBox>
 
@@ -92,13 +100,23 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Row="0" Grid.Column="0" Content="Водитель:" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="cbDrivers" Grid.Row="0" Grid.Column="1" Height="30" DisplayMemberPath="Title" SelectedValuePath="Id" Margin="0,0,0,8"/>
+                    <ComboBox x:Name="cbDrivers" Grid.Row="0" Grid.Column="1" Height="30"
+                              ItemsSource="{Binding Drivers}"
+                              DisplayMemberPath="Title"
+                              SelectedValuePath="Id"
+                              SelectedValue="{Binding SelectedDriverId, Mode=TwoWay}"
+                              Margin="0,0,0,8"/>
 
                     <Label Grid.Row="1" Grid.Column="0" Content="Автобус:" VerticalAlignment="Center"/>
-                    <ComboBox x:Name="cbBuses" Grid.Row="1" Grid.Column="1" Height="30" DisplayMemberPath="Title" SelectedValuePath="Id" Margin="0,0,0,8"/>
+                    <ComboBox x:Name="cbBuses" Grid.Row="1" Grid.Column="1" Height="30"
+                              ItemsSource="{Binding Buses}"
+                              DisplayMemberPath="Title"
+                              SelectedValuePath="Id"
+                              SelectedValue="{Binding SelectedBusId, Mode=TwoWay}"
+                              Margin="0,0,0,8"/>
 
                     <Label Grid.Row="2" Grid.Column="0" Content="Цена (руб):" VerticalAlignment="Center"/>
-                    <TextBox x:Name="tbPrice" Grid.Row="2" Grid.Column="1" Height="26" Text="0,00" />
+                    <TextBox x:Name="tbPrice" Grid.Row="2" Grid.Column="1" Height="26" Text="{Binding PriceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
             </GroupBox>
 
@@ -107,12 +125,13 @@
                     CornerRadius="5" Padding="10" Margin="0,0,0,10">
                 <StackPanel>
                     <TextBlock x:Name="tbInfo" 
-                              Text="Выберите параметры для генерации"
+                              Text="{Binding InfoText}"
                               TextWrapping="Wrap"/>
                     <ProgressBar x:Name="pbProgress" 
                                 Height="10" 
                                 Margin="0,10,0,0"
-                                Visibility="Collapsed"/>
+                                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                                IsIndeterminate="True"/>
                 </StackPanel>
             </Border>
 
@@ -126,13 +145,13 @@
                    Background="#4CAF50"
                    Foreground="White"
                    FontWeight="Bold"
-                   Click="btnGenerate_Click"
+                   Command="{Binding GenerateCommand}"
                    Margin="0,0,10,0"/>
 
             <Button x:Name="btnCancel" 
                    Content="Отмена" 
                    Width="120" Height="35"
-                   Click="btnCancel_Click"/>
+                   Command="{Binding CancelCommand}"/>
         </StackPanel>
 
     </Grid>

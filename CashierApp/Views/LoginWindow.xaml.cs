@@ -1,60 +1,32 @@
 ﻿using System;
 using System.Windows;
 using BLL.Interfaces;    // IAuthService
-using BLL.Models;       // UserDTO (пример)
+using BLL.Models;       // UserDTO
+using CashierApp.ViewModels;
 
 namespace CashierApp.Views
 {
     public partial class LoginWindow : Window
     {
-        private readonly IAuthService _authService;
-
-        // Публичное свойство, которое проверяет App.OnStartup
-        public UserDTO LoggedUser { get; private set; }
+        private readonly LoginViewModel _vm;
 
         public LoginWindow(IAuthService authService)
         {
             InitializeComponent();
-            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+
+            _vm = new LoginViewModel(authService ?? throw new ArgumentNullException(nameof(authService)));
+            _vm.RequestClose += Vm_RequestClose;
+
+            DataContext = _vm;
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void Vm_RequestClose(object sender, bool dialogResult)
         {
-            ErrorTextBlock.Visibility = Visibility.Collapsed;
-
-            var username = UsernameTextBox.Text?.Trim();
-            var password = PasswordBox.Password;
-
-            try
-            {
-                var user = _authService.Authenticate(username, password); // синхронный вариант
-                if (user == null)
-                {
-                    ShowError("Неверный логин или пароль");
-                    return;
-                }
-
-                LoggedUser = user;
-
-                // ВАЖНО: выставляем DialogResult = true — ShowDialog вернёт true и окно закроется
-                this.DialogResult = true;
-            }
-            catch (Exception ex)
-            {
-                ShowError("Ошибка при аутентификации");
-                // при необходимости логируйте ex
-            }
+            this.DialogResult = dialogResult;
+            this.Close();
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.DialogResult = false;
-        }
-
-        private void ShowError(string message)
-        {
-            ErrorTextBlock.Text = message;
-            ErrorTextBlock.Visibility = Visibility.Visible;
-        }
+        // Внешний код (App.OnStartup и т.д.) может получить результат
+        public UserDTO LoggedUser => _vm?.LoggedUser;
     }
 }

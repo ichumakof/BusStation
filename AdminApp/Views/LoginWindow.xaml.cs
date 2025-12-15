@@ -1,65 +1,31 @@
 ﻿using System;
 using System.Windows;
 using BLL.Interfaces;
-using BLL.Models;
+using AdminApp.ViewModels;
 
 namespace AdminApp.Views
 {
     public partial class LoginWindow : Window
     {
-        private readonly IAuthService _authService;
-        public UserDTO LoggedUser { get; private set; }
+        private readonly LoginViewModel _vm;
 
         public LoginWindow(IAuthService authService)
         {
             InitializeComponent();
-            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+
+            _vm = new LoginViewModel(authService ?? throw new ArgumentNullException(nameof(authService)));
+            _vm.RequestClose += Vm_RequestClose;
+
+            DataContext = _vm;
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void Vm_RequestClose(object sender, bool dialogResult)
         {
-            ErrorTextBlock.Visibility = Visibility.Collapsed;
-            ErrorTextBlock.Text = string.Empty;
-
-            var username = UsernameTextBox.Text?.Trim();
-            var password = PasswordBox.Password;
-
-            try
-            {
-                // Если Authenticate возвращает null для неверных данных — мы корректно обрабатываем
-                var user = _authService.Authenticate(username, password);
-                if (user == null)
-                {
-                    ShowError("Неверный логин или пароль");
-                    return;
-                }
-
-                LoggedUser = user;
-
-                // ВАЖНО: нужно выставить DialogResult = true, это автоматически закроет окно и ShowDialog вернёт true
-                this.DialogResult = true;
-            }
-            catch (ArgumentException argEx)
-            {
-                ShowError(argEx.Message);
-            }
-            catch (Exception ex)
-            {
-                // Логирование по желанию
-                ShowError("Ошибка при аутентификации");
-            }
+            // Устанавливаем DialogResult; окно закроется автоматически
+            this.DialogResult = dialogResult;
+            this.Close();
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Явно возвращаем false — ShowDialog вернёт false
-            this.DialogResult = false;
-        }
-
-        private void ShowError(string message)
-        {
-            ErrorTextBlock.Text = message;
-            ErrorTextBlock.Visibility = Visibility.Visible;
-        }
+        public BLL.Models.UserDTO LoggedUser => _vm?.LoggedUser;
     }
 }

@@ -33,8 +33,8 @@
                 <TextBlock Text="АДМИНИСТРАТОР: " 
                           Foreground="White" FontWeight="Bold"/>
                 <TextBlock x:Name="tbAdminName" 
-                          Text="Иванов И.И."
-                          Foreground="White" FontWeight="Bold" Margin="5,0"/>
+                           Text="{Binding AdminName}"
+                           Foreground="White" FontWeight="Bold" Margin="5,0"/>
             </StackPanel>
         </Border>
 
@@ -58,17 +58,17 @@
                     <Button x:Name="btnScheduleGenerator" 
                            Content="📅 Генератор расписания"
                            Style="{StaticResource MenuButtonStyle}"
-                           Click="btnScheduleGenerator_Click"/>
+                           Command="{Binding OpenScheduleGeneratorCommand}"/>
 
                     <Button x:Name="btnReports" 
                            Content="📊 Отчеты по продажам"
                            Style="{StaticResource MenuButtonStyle}"
-                           Click="btnReports_Click"/>
+                           Command="{Binding OpenReportsCommand}"/>
 
                     <Button x:Name="btnTrips" 
                            Content="🚌 Управление рейсами"
                            Style="{StaticResource MenuButtonStyle}"
-                           Click="btnTrips_Click"/>
+                           Command="{Binding OpenTripsCommand}"/>
                 </StackPanel>
             </Border>
 
