@@ -16,15 +16,14 @@ namespace DAL
     {
         public int TicketID { get; set; }
         public int TripID { get; set; }
-        public Nullable<int> PassengerID { get; set; }
         public int SoldByUserID { get; set; }
         public int DestinationStopID { get; set; }
         public int SeatNumber { get; set; }
         public System.DateTime PurchaseDateTime { get; set; }
         public double Price { get; set; }
         public string Status { get; set; }
+        public string TypeOfPayment { get; set; }
     
-        public virtual Passengers Passengers { get; set; }
         public virtual Stops Stops { get; set; }
         public virtual Trips Trips { get; set; }
         public virtual Users Users { get; set; }

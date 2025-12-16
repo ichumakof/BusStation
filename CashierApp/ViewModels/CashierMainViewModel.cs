@@ -13,7 +13,6 @@ using System.Windows.Threading;
 
 namespace CashierApp.ViewModels
 {
-    // Аргументы для показа MessageBox из VM (View подпишется и отобразит)
     public class MessageRequestEventArgs : EventArgs
     {
         public string Message { get; set; }
@@ -25,25 +24,25 @@ namespace CashierApp.ViewModels
     public class CashierMainViewModel : INotifyPropertyChanged
     {
         private readonly ILookupService _lookupService;
+        private readonly ITicketService _ticketService;
         private readonly DispatcherTimer _typingTimer;
         private List<CityDTO> _cities = new List<CityDTO>();
         private int? _selectedCityId = null;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<MessageRequestEventArgs> RequestShowMessage;
+        public event EventHandler<TripItem> RequestOpenSellDialog;
 
-        public CashierMainViewModel(ILookupService lookupService = null)
+        public CashierMainViewModel(ILookupService lookupService = null, ITicketService ticketService = null)
         {
             _lookupService = lookupService ?? new LookupService();
-
+            _ticketService = ticketService ?? new TicketService();
             CashierName = GetCurrentUserName();
-
             SelectedDate = DateTime.Today;
 
             Suggestions = new ObservableCollection<CityDTO>();
             Trips = new ObservableCollection<TripItem>();
 
-            // Таймер для "debounce" ввода
             _typingTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
             _typingTimer.Tick += (s, e) =>
             {
@@ -53,15 +52,24 @@ namespace CashierApp.ViewModels
 
             KeyDownDownCommand = new RelayCommand(OnKeyDown_Down);
             KeyDownEnterCommand = new RelayCommand(OnKeyDown_Enter);
+
+            OpenSellDialogCommand = new RelayCommand<TripItem>(OnOpenSellDialog, t => t != null && (t.AvailableSeats < 0 || t.AvailableSeats > 0));
         }
 
-        #region Проперти для биндинга
-
+        #region Проперти
         private string _cashierName;
-        public string CashierName { get => _cashierName; set { if (_cashierName != value) { _cashierName = value; OnPropertyChanged(nameof(CashierName)); } } }
+        public string CashierName
+        {
+            get => _cashierName;
+            set { if (_cashierName != value) { _cashierName = value; OnPropertyChanged(nameof(CashierName)); } }
+        }
 
         private DateTime? _selectedDate;
-        public DateTime? SelectedDate { get => _selectedDate; set { if (_selectedDate != value) { _selectedDate = value; OnPropertyChanged(nameof(SelectedDate)); DateChanged(); } } }
+        public DateTime? SelectedDate
+        {
+            get => _selectedDate;
+            set { if (_selectedDate != value) { _selectedDate = value; OnPropertyChanged(nameof(SelectedDate)); DateChanged(); } }
+        }
 
         private string _searchText;
         public string SearchText
@@ -74,7 +82,7 @@ namespace CashierApp.ViewModels
                     _searchText = value;
                     OnPropertyChanged(nameof(SearchText));
 
-                    // (debounce) перезапускаем таймер
+                    // debounce
                     _typingTimer.Stop();
                     _typingTimer.Start();
                 }
@@ -83,7 +91,11 @@ namespace CashierApp.ViewModels
 
         public ObservableCollection<CityDTO> Suggestions { get; }
         private bool _areSuggestionsVisible = false;
-        public bool AreSuggestionsVisible { get => _areSuggestionsVisible; private set { if (_areSuggestionsVisible != value) { _areSuggestionsVisible = value; OnPropertyChanged(nameof(AreSuggestionsVisible)); } } }
+        public bool AreSuggestionsVisible
+        {
+            get => _areSuggestionsVisible;
+            private set { if (_areSuggestionsVisible != value) { _areSuggestionsVisible = value; OnPropertyChanged(nameof(AreSuggestionsVisible)); } }
+        }
 
         private CityDTO _selectedSuggestion;
         public CityDTO SelectedSuggestion
@@ -97,41 +109,32 @@ namespace CashierApp.ViewModels
                     OnPropertyChanged(nameof(SelectedSuggestion));
                     if (_selectedSuggestion != null)
                     {
-                        SelectCity(_selectedSuggestion.CityID, _selectedSuggestion.CityName);
+                        // Запускаем безопасную асинхронную последовательность выбора города
+                        StartSelectCityFlow(_selectedSuggestion.CityID, _selectedSuggestion.CityName);
                     }
                 }
             }
         }
 
         public ObservableCollection<TripItem> Trips { get; }
-
         #endregion
 
-        #region Команды для клавиш
+        #region Команды
         public ICommand KeyDownDownCommand { get; }
         public ICommand KeyDownEnterCommand { get; }
+        public ICommand OpenSellDialogCommand { get; }
 
-        private void OnKeyDown_Down()
-        {
-            // Сдвиг фокуса на список подсказок — View может это обработать (в нашем случае View не делает дополнительного фокуса),
-            // но можем открыть подсказки, если они есть.
-            if (AreSuggestionsVisible && Suggestions.Count > 0)
-            {
-                // В MVVM нельзя явно фокусировать контролы; View может сама перевести фокус при необходимости.
-                // Здесь просто оставляем подсказки видимыми.
-            }
-        }
+        private void OnKeyDown_Down() { /* noop */ }
 
         private void OnKeyDown_Enter()
         {
-            // Попытка выбрать точное совпадение по тексту
             var txt = SearchText?.Trim();
             if (!string.IsNullOrEmpty(txt))
             {
                 var exact = _cities.FirstOrDefault(c => string.Equals(c.CityName, txt, StringComparison.CurrentCultureIgnoreCase));
                 if (exact != null)
                 {
-                    SelectCity(exact.CityID, exact.CityName);
+                    StartSelectCityFlow(exact.CityID, exact.CityName);
                     return;
                 }
             }
@@ -140,13 +143,18 @@ namespace CashierApp.ViewModels
             {
                 var first = Suggestions.FirstOrDefault();
                 if (first != null)
-                    SelectCity(first.CityID, first.CityName);
+                    StartSelectCityFlow(first.CityID, first.CityName);
             }
+        }
+
+        private void OnOpenSellDialog(TripItem trip)
+        {
+            if (trip == null) return;
+            RequestOpenSellDialog?.Invoke(this, trip);
         }
         #endregion
 
-        #region Загрузка городов / показ подсказок / выбор города / загрузка рейсов
-
+        #region Города / рейсы
         public async Task LoadCitiesAsync()
         {
             try
@@ -199,18 +207,60 @@ namespace CashierApp.ViewModels
             SelectedSuggestion = null;
         }
 
-        private void SelectCity(int cityId, string cityName)
+        // NEW: безопасный старт выбора города — останавливаем таймер, прячем подсказки и стартуем асинхронно загрузку рейсов.
+        private void StartSelectCityFlow(int cityId, string cityName)
         {
-            _selectedCityId = cityId;
-            SearchText = cityName;
-            HideSuggestions();
-            _ = LoadTripsForSelectedAsync();
+            try
+            {
+                // остановим таймер, чтобы он не перезапустил подсказки параллельно
+                _typingTimer.Stop();
+
+                _selectedCityId = cityId;
+                // Устанавливаем текст поиска сразу (UI)
+                SearchText = cityName;
+
+                // скрываем подсказки (это безопасно — SelectedSuggestion станет null но не вызовет повторного SelectCity)
+                HideSuggestions();
+
+                // Асинхронно загрузим рейсы в "безопасной" обёртке, чтобы любые исключения были обработаны
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await LoadTripsForSelectedAsync().ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Пропускаем обратно в UI поток показ сообщения
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            RequestShowMessage?.Invoke(this, new MessageRequestEventArgs
+                            {
+                                Message = "Ошибка при загрузке рейсов: " + ex.Message,
+                                Caption = "Ошибка",
+                                Button = MessageBoxButton.OK,
+                                Icon = MessageBoxImage.Error
+                            });
+                        });
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                RequestShowMessage?.Invoke(this, new MessageRequestEventArgs
+                {
+                    Message = "Ошибка выбора города: " + ex.Message,
+                    Caption = "Ошибка",
+                    Button = MessageBoxButton.OK,
+                    Icon = MessageBoxImage.Error
+                });
+            }
         }
 
         private void DateChanged()
         {
             if (_selectedCityId.HasValue)
-                _ = LoadTripsForSelectedAsync();
+                StartSelectCityFlow(_selectedCityId.Value, SearchText);
         }
 
         private async Task LoadTripsForSelectedAsync()
@@ -221,7 +271,9 @@ namespace CashierApp.ViewModels
 
             try
             {
-                var tripsDto = await _lookupService.GetTripsByArrivalCityAndDateAsync(cityId, date);
+                var tripsDto = await _lookupService.GetTripsByArrivalCityAndDateAsync(cityId, date).ConfigureAwait(false);
+
+                // Обновляем коллекцию в UI-потоке
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     Trips.Clear();
@@ -232,24 +284,46 @@ namespace CashierApp.ViewModels
                         ExtraInfo = $"Отправление - {x.FormattedDeparture}",
                         Price = x.Price,
                         PriceText = $"{(x.Price):F2} руб.",
-                        DepartureTime = x.DepartureDateTime.ToString("HH:mm")
+                        DepartureTime = x.DepartureDateTime.ToString("HH:mm"),
+                        AvailableSeats = -1 // пока не загружено
                     });
 
-                    foreach (var it in items) Trips.Add(it);
+                    foreach (var it in items)
+                    {
+                        Trips.Add(it);
+                        // асинхронно подтянем свободные места, но безопасно (исключения ловим внутри)
+                        _ = LoadAvailableSeatsAsync(it);
+                    }
                 });
             }
             catch (Exception ex)
             {
-                RequestShowMessage?.Invoke(this, new MessageRequestEventArgs
+                // сюда попадает исключение только если не перехвачено выше
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Message = "Ошибка при загрузке рейсов: " + ex.Message,
-                    Caption = "Ошибка",
-                    Button = MessageBoxButton.OK,
-                    Icon = MessageBoxImage.Error
+                    RequestShowMessage?.Invoke(this, new MessageRequestEventArgs
+                    {
+                        Message = "Ошибка при загрузке рейсов: " + ex.Message,
+                        Caption = "Ошибка",
+                        Button = MessageBoxButton.OK,
+                        Icon = MessageBoxImage.Error
+                    });
                 });
             }
         }
 
+        private async Task LoadAvailableSeatsAsync(TripItem trip)
+        {
+            try
+            {
+                var count = await _ticketService.GetAvailableSeatsAsync(trip.TripID).ConfigureAwait(false);
+                Application.Current.Dispatcher.Invoke(() => trip.AvailableSeats = Math.Max(0, count));
+            }
+            catch
+            {
+                Application.Current.Dispatcher.Invoke(() => trip.AvailableSeats = -1);
+            }
+        }
         #endregion
 
         private string GetCurrentUserName()
@@ -268,8 +342,7 @@ namespace CashierApp.ViewModels
         }
 
         #region Вспомогательные классы и команды
-
-        public class TripItem
+        public class TripItem : INotifyPropertyChanged
         {
             public int TripID { get; set; }
             public string RouteTitle { get; set; }
@@ -277,16 +350,34 @@ namespace CashierApp.ViewModels
             public double Price { get; set; }
             public string PriceText { get; set; }
             public string DepartureTime { get; set; }
+
+            private int _availableSeats = -1;
+            public int AvailableSeats
+            {
+                get => _availableSeats;
+                set
+                {
+                    if (_availableSeats != value)
+                    {
+                        _availableSeats = value;
+                        OnPropertyChanged(nameof(AvailableSeats));
+                        OnPropertyChanged(nameof(AvailableSeatsText));
+                    }
+                }
+            }
+            public string AvailableSeatsText => AvailableSeats < 0 ? "..." : AvailableSeats.ToString();
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        // Простейшая реализация RelayCommand
         public class RelayCommand : ICommand
         {
             private readonly Action _execute;
             private readonly Func<bool> _canExecute;
             public RelayCommand(Action execute, Func<bool> canExecute = null)
             {
-                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+                _execute = execute;
                 _canExecute = canExecute;
             }
             public bool CanExecute(object parameter) => _canExecute?.Invoke() ?? true;
@@ -294,8 +385,21 @@ namespace CashierApp.ViewModels
             public event EventHandler CanExecuteChanged { add { CommandManager.RequerySuggested += value; } remove { CommandManager.RequerySuggested -= value; } }
         }
 
-        #endregion
+        public class RelayCommand<T> : ICommand
+        {
+            private readonly Action<T> _execute;
+            private readonly Func<T, bool> _canExecute;
+            public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
+            {
+                _execute = execute;
+                _canExecute = canExecute;
+            }
+            public bool CanExecute(object parameter) => _canExecute?.Invoke((T)parameter) ?? true;
+            public void Execute(object parameter) => _execute((T)parameter);
+            public event EventHandler CanExecuteChanged { add { CommandManager.RequerySuggested += value; } remove { CommandManager.RequerySuggested -= value; } }
+        }
 
-        protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        #endregion
     }
 }

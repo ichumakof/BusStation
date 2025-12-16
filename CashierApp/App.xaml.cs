@@ -8,6 +8,13 @@ namespace CashierApp
 {
     public partial class App : Application
     {
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            // Показываем сообщение и предотвращаем крах
+            MessageBox.Show("Произошла непредвиденная ошибка: " + e.Exception.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Пометить как обработанное (можно логировать ошибки)
+            e.Handled = true;
+        }
         public static UserDTO CurrentUser { get; set; }
 
         protected override void OnStartup(StartupEventArgs e)

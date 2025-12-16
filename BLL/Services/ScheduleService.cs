@@ -124,48 +124,6 @@ namespace BLL.Services
                 yield return day;
         }
 
-        // Helpers (рефлексия)
-        private static int? GetDestinationCityId(object route)
-        {
-            if (route == null) return null;
-            var t = route.GetType();
-            var propNames = new[] { "DestinationCityID", "ToCityID", "ArrivalCityID", "CityToID", "DestinationID", "ToID" };
-            foreach (var name in propNames)
-            {
-                var p = t.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                if (p == null) continue;
-                var val = p.GetValue(route, null);
-                if (val == null) continue;
-                int id;
-                if (int.TryParse(val.ToString(), out id)) return id;
-            }
-            return null;
-        }
-
-        private static PropertyInfo FindIdProperty(object obj, string[] candidates)
-        {
-            if (obj == null) return null;
-            var t = obj.GetType();
-            foreach (var name in candidates)
-            {
-                var p = t.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                if (p != null) return p;
-            }
-            return null;
-        }
-
-        private static PropertyInfo FindStringProperty(object obj, string[] candidates)
-        {
-            if (obj == null) return null;
-            var t = obj.GetType();
-            foreach (var name in candidates)
-            {
-                var p = t.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-                if (p != null && p.PropertyType == typeof(string)) return p;
-            }
-            return null;
-        }
-
         private static int GetIntId(object obj, string[] candidates)
         {
             if (obj == null) return 0;

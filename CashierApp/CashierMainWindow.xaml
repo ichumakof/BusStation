@@ -64,8 +64,8 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="140"/>
-                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="130"/>
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Orientation="Vertical">
@@ -73,11 +73,24 @@
                                     <TextBlock Foreground="#666" Text="{Binding ExtraInfo}" FontSize="12"/>
                                 </StackPanel>
 
-                                <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" 
-                                           FontSize="14" FontWeight="SemiBold" Text="{Binding PriceText}"/>
+                                <!-- Цена + свободные места -->
+                                <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock FontSize="14" FontWeight="SemiBold" Text="{Binding PriceText}" HorizontalAlignment="Right"/>
+                                    <TextBlock Margin="0,6,0,0" HorizontalAlignment="Right">
+                                        <Run Text="Свободных мест: "/>
+                                        <Run Text="{Binding AvailableSeatsText, Mode=OneWay}" />
+                                    </TextBlock>
+                                </StackPanel>
 
-                                <!--<TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" 
-                                           FontSize="14" Text="{Binding DepartureTime}"/>-->
+                                <!-- Кнопка оформления -->
+                                <Button Grid.Column="2"
+                                        Width="110"
+                                        Height="30"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Content="Оформить"
+                                        Command="{Binding DataContext.OpenSellDialogCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" />
                             </Grid>
                         </Border>
                     </DataTemplate>

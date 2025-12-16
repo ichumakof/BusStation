@@ -28,7 +28,6 @@ namespace DAL
         public virtual DbSet<Buses> Buses { get; set; }
         public virtual DbSet<Cities> Cities { get; set; }
         public virtual DbSet<Drivers> Drivers { get; set; }
-        public virtual DbSet<Passengers> Passengers { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<Routes> Routes { get; set; }
         public virtual DbSet<RouteStop> RouteStop { get; set; }

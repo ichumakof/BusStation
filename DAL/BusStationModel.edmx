@@ -31,14 +31,6 @@
           <Property Name="LicenseNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Phone" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="Passengers">
-          <Key>
-            <PropertyRef Name="PassengerID" />
-          </Key>
-          <Property Name="PassengerID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="FullName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="PassportNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
-        </EntityType>
         <EntityType Name="Roles">
           <Key>
             <PropertyRef Name="RoleID" />
@@ -91,13 +83,13 @@
           </Key>
           <Property Name="TicketID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TripID" Type="int" Nullable="false" />
-          <Property Name="PassengerID" Type="int" />
           <Property Name="SoldByUserID" Type="int" Nullable="false" />
           <Property Name="DestinationStopID" Type="int" Nullable="false" />
           <Property Name="SeatNumber" Type="int" Nullable="false" />
           <Property Name="PurchaseDateTime" Type="datetime" Nullable="false" />
           <Property Name="Price" Type="float" Nullable="false" />
           <Property Name="Status" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="TypeOfPayment" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Trips">
           <Key>
@@ -181,18 +173,6 @@
             </Principal>
             <Dependent Role="Stops">
               <PropertyRef Name="CityID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Tickets_Passengers">
-          <End Role="Passengers" Type="Self.Passengers" Multiplicity="0..1" />
-          <End Role="Tickets" Type="Self.Tickets" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Passengers">
-              <PropertyRef Name="PassengerID" />
-            </Principal>
-            <Dependent Role="Tickets">
-              <PropertyRef Name="PassengerID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -296,7 +276,6 @@
           <EntitySet Name="Buses" EntityType="Self.Buses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cities" EntityType="Self.Cities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Drivers" EntityType="Self.Drivers" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Passengers" EntityType="Self.Passengers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Routes" EntityType="Self.Routes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RouteStop" EntityType="Self.RouteStop" Schema="dbo" store:Type="Tables" />
@@ -324,10 +303,6 @@
           <AssociationSet Name="FK_Stops_Cities" Association="Self.FK_Stops_Cities">
             <End Role="Cities" EntitySet="Cities" />
             <End Role="Stops" EntitySet="Stops" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Tickets_Passengers" Association="Self.FK_Tickets_Passengers">
-            <End Role="Passengers" EntitySet="Passengers" />
-            <End Role="Tickets" EntitySet="Tickets" />
           </AssociationSet>
           <AssociationSet Name="FK_Tickets_Stops" Association="Self.FK_Tickets_Stops">
             <End Role="Stops" EntitySet="Stops" />
@@ -396,15 +371,6 @@
           <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Trips" Relationship="Self.FK_Trips_Drivers" FromRole="Drivers" ToRole="Trips" />
         </EntityType>
-        <EntityType Name="Passengers">
-          <Key>
-            <PropertyRef Name="PassengerID" />
-          </Key>
-          <Property Name="PassengerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PassportNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Tickets" Relationship="Self.FK_Tickets_Passengers" FromRole="Passengers" ToRole="Tickets" />
-        </EntityType>
         <EntityType Name="Roles">
           <Key>
             <PropertyRef Name="RoleID" />
@@ -469,17 +435,16 @@
           </Key>
           <Property Name="TicketID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TripID" Type="Int32" Nullable="false" />
-          <Property Name="PassengerID" Type="Int32" />
           <Property Name="SoldByUserID" Type="Int32" Nullable="false" />
           <Property Name="DestinationStopID" Type="Int32" Nullable="false" />
           <Property Name="SeatNumber" Type="Int32" Nullable="false" />
           <Property Name="PurchaseDateTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Price" Type="Double" Nullable="false" />
           <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Passengers" Relationship="Self.FK_Tickets_Passengers" FromRole="Tickets" ToRole="Passengers" />
           <NavigationProperty Name="Stops" Relationship="Self.FK_Tickets_Stops" FromRole="Tickets" ToRole="Stops" />
           <NavigationProperty Name="Trips" Relationship="Self.FK_Tickets_Trips" FromRole="Tickets" ToRole="Trips" />
           <NavigationProperty Name="Users" Relationship="Self.FK_Tickets_Users" FromRole="Tickets" ToRole="Users" />
+          <Property Name="TypeOfPayment" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Trips">
           <Key>
@@ -558,18 +523,6 @@
             </Principal>
             <Dependent Role="Trips">
               <PropertyRef Name="DriverID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Tickets_Passengers">
-          <End Role="Passengers" Type="Self.Passengers" Multiplicity="0..1" />
-          <End Role="Tickets" Type="Self.Tickets" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Passengers">
-              <PropertyRef Name="PassengerID" />
-            </Principal>
-            <Dependent Role="Tickets">
-              <PropertyRef Name="PassengerID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -685,7 +638,6 @@
           <EntitySet Name="Buses" EntityType="Self.Buses" />
           <EntitySet Name="Cities" EntityType="Self.Cities" />
           <EntitySet Name="Drivers" EntityType="Self.Drivers" />
-          <EntitySet Name="Passengers" EntityType="Self.Passengers" />
           <EntitySet Name="Roles" EntityType="Self.Roles" />
           <EntitySet Name="Routes" EntityType="Self.Routes" />
           <EntitySet Name="RouteStop" EntityType="Self.RouteStop" />
@@ -709,10 +661,6 @@
           <AssociationSet Name="FK_Trips_Drivers" Association="Self.FK_Trips_Drivers">
             <End Role="Drivers" EntitySet="Drivers" />
             <End Role="Trips" EntitySet="Trips" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Tickets_Passengers" Association="Self.FK_Tickets_Passengers">
-            <End Role="Passengers" EntitySet="Passengers" />
-            <End Role="Tickets" EntitySet="Tickets" />
           </AssociationSet>
           <AssociationSet Name="FK_Users_Roles" Association="Self.FK_Users_Roles">
             <End Role="Roles" EntitySet="Roles" />
@@ -786,15 +734,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Passengers">
-            <EntityTypeMapping TypeName="BusStationModel.Passengers">
-              <MappingFragment StoreEntitySet="Passengers">
-                <ScalarProperty Name="PassengerID" ColumnName="PassengerID" />
-                <ScalarProperty Name="FullName" ColumnName="FullName" />
-                <ScalarProperty Name="PassportNumber" ColumnName="PassportNumber" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Roles">
             <EntityTypeMapping TypeName="BusStationModel.Roles">
               <MappingFragment StoreEntitySet="Roles">
@@ -849,9 +788,9 @@
           <EntitySetMapping Name="Tickets">
             <EntityTypeMapping TypeName="BusStationModel.Tickets">
               <MappingFragment StoreEntitySet="Tickets">
+                <ScalarProperty Name="TypeOfPayment" ColumnName="TypeOfPayment" />
                 <ScalarProperty Name="TicketID" ColumnName="TicketID" />
                 <ScalarProperty Name="TripID" ColumnName="TripID" />
-                <ScalarProperty Name="PassengerID" ColumnName="PassengerID" />
                 <ScalarProperty Name="SoldByUserID" ColumnName="SoldByUserID" />
                 <ScalarProperty Name="DestinationStopID" ColumnName="DestinationStopID" />
                 <ScalarProperty Name="SeatNumber" ColumnName="SeatNumber" />
