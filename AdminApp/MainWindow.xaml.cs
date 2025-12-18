@@ -22,6 +22,7 @@ namespace AdminApp
             // Подписка на событие открытия генератора — View откроет модальное окно
             _vm.RequestOpenScheduleGenerator += Vm_RequestOpenScheduleGenerator;
             _vm.RequestShowMessage += Vm_RequestShowMessage;
+            _vm.RequestOpenUsers += Vm_RequestOpenUsers;
         }
 
         private void Vm_RequestShowMessage(object sender, MessageRequestEventArgs e)
@@ -34,6 +35,26 @@ namespace AdminApp
             var scheduleWindow = new ScheduleGeneratorView(_scheduleService);
             scheduleWindow.Owner = this;
             scheduleWindow.ShowDialog();
+        }
+        private void Vm_RequestOpenUsers(object sender, EventArgs e)
+        {
+            // Пытаемся получить id текущего администратора
+            int currentAdminId = 0;
+            try
+            {
+                var user = App.Current.GetType().GetProperty("CurrentUser")?.GetValue(App.Current, null);
+                if (user != null)
+                {
+                    var idProp = user.GetType().GetProperty("UserID") ?? user.GetType().GetProperty("Id") ?? user.GetType().GetProperty("ID");
+                    if (idProp != null) currentAdminId = Convert.ToInt32(idProp.GetValue(user));
+                }
+            }
+            catch { }
+
+            IUserService userService = FactoryService.CreateUserService();
+
+            var wnd = new UsersWindow(userService, currentAdminId) { Owner = this };
+            wnd.ShowDialog();
         }
     }
 }

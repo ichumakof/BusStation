@@ -18,12 +18,14 @@ namespace AdminApp.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler RequestOpenScheduleGenerator;
         public event EventHandler<MessageRequestEventArgs> RequestShowMessage;
+        public event EventHandler RequestOpenUsers;
 
         public MainWindowViewModel()
         {
             OpenScheduleGeneratorCommand = new RelayCommand(() => RequestOpenScheduleGenerator?.Invoke(this, EventArgs.Empty));
             OpenReportsCommand = new RelayCommand(OpenReports);
             OpenTripsCommand = new RelayCommand(OpenTrips);
+            OpenUsersCommand = new RelayCommand(() => RequestOpenUsers?.Invoke(this, EventArgs.Empty));
 
             AdminName = GetAdminName();
         }
@@ -49,6 +51,7 @@ namespace AdminApp.ViewModels
         public ICommand OpenScheduleGeneratorCommand { get; }
         public ICommand OpenReportsCommand { get; }
         public ICommand OpenTripsCommand { get; }
+        public ICommand OpenUsersCommand { get; }
 
         private void OpenReports()
         {

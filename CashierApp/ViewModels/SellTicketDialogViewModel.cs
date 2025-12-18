@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using BLL.Interfaces;
 using BLL.Models;
-using BLL.Services; // для TicketPdfPrinter (если он в этом пространстве имён)
+using BLL.Services;
 
 namespace CashierApp.ViewModels
 {

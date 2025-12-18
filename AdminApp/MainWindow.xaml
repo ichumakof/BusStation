@@ -54,7 +54,7 @@
                               Margin="0,0,0,30"
                               HorizontalAlignment="Center"/>
 
-                    <!-- Только 3 кнопки -->
+                    <!-- 4 кнопки -->
                     <Button x:Name="btnScheduleGenerator" 
                            Content="📅 Генератор расписания"
                            Style="{StaticResource MenuButtonStyle}"
@@ -69,6 +69,11 @@
                            Content="🚌 Управление рейсами"
                            Style="{StaticResource MenuButtonStyle}"
                            Command="{Binding OpenTripsCommand}"/>
+
+                    <Button x:Name="btnUsers" 
+                           Content="👥 Управление сотрудниками"
+                           Style="{StaticResource MenuButtonStyle}"
+                           Command="{Binding OpenUsersCommand}"/> 
                 </StackPanel>
             </Border>
 

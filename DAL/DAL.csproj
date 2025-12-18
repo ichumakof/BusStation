@@ -81,6 +81,7 @@
     <Compile Include="Interfaces\IAuthRepository.cs" />
     <Compile Include="Interfaces\IScheduleRepository.cs" />
     <Compile Include="Interfaces\ITripRepository.cs" />
+    <Compile Include="Interfaces\IUserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\AuthRepository.cs" />
     <Compile Include="Repositories\ScheduleRepository.cs" />
