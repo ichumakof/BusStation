@@ -17,5 +17,9 @@ namespace BLL.Interfaces
 
         // Подготавливает данные для печати по списку id билетов
         Task<List<TicketPrintDTO>> GetTicketsForPrintingAsync(IEnumerable<int> ticketIds);
+
+        // Новый метод: формирование агрегированных данных для отчёта.
+        Task<List<CityDTO>> GetAllCitiesAsync();
+        Task<TicketReportResult> GetTicketsReportAsync(DateTime from, DateTime to, IList<int> cityIds = null);
     }
 }

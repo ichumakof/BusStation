@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Interfaces\IAuthService.cs" />
+    <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\IScheduleService.cs" />
     <Compile Include="Interfaces\ITicketService.cs" />
     <Compile Include="Interfaces\IUserService.cs" />
@@ -79,6 +80,8 @@
     <Compile Include="Models\SellTicketsRequest.cs" />
     <Compile Include="Models\SimpleItemDTO.cs" />
     <Compile Include="Models\TicketPrintDTO.cs" />
+    <Compile Include="Models\TicketReportItem.cs" />
+    <Compile Include="Models\TicketReportResult.cs" />
     <Compile Include="Models\TripDTO.cs" />
     <Compile Include="Models\UserDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Services\FactoryService.cs" />
     <Compile Include="Services\LookupService.cs" />
     <Compile Include="Services\PrinterService.cs" />
+    <Compile Include="Services\ReportService.cs" />
     <Compile Include="Services\ScheduleService.cs" />
     <Compile Include="Services\TicketService.cs" />
     <Compile Include="Services\UserService.cs" />

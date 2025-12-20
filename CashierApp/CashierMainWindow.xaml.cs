@@ -32,7 +32,7 @@ namespace CashierApp
                     if (!(IsMouseOverElement(lb) || IsMouseOverElement(tb)))
                         _vm.HideSuggestions();
                 }
-                catch { /* без фатальной ошибки */ }
+                catch { }
             };
 
             _ = _vm.LoadCitiesAsync();

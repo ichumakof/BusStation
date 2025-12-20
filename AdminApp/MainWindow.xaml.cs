@@ -23,6 +23,7 @@ namespace AdminApp
             _vm.RequestOpenScheduleGenerator += Vm_RequestOpenScheduleGenerator;
             _vm.RequestShowMessage += Vm_RequestShowMessage;
             _vm.RequestOpenUsers += Vm_RequestOpenUsers;
+            _vm.RequestOpenReports += Vm_RequestOpenReports;
         }
 
         private void Vm_RequestShowMessage(object sender, MessageRequestEventArgs e)
@@ -54,6 +55,11 @@ namespace AdminApp
             IUserService userService = FactoryService.CreateUserService();
 
             var wnd = new UsersWindow(userService, currentAdminId) { Owner = this };
+            wnd.ShowDialog();
+        }
+        private void Vm_RequestOpenReports(object sender, EventArgs e)
+        {
+            var wnd = new ReportsWindow { Owner = this };
             wnd.ShowDialog();
         }
     }

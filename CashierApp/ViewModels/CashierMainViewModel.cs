@@ -207,12 +207,10 @@ namespace CashierApp.ViewModels
             SelectedSuggestion = null;
         }
 
-        // NEW: безопасный старт выбора города — останавливаем таймер, прячем подсказки и стартуем асинхронно загрузку рейсов.
         private void StartSelectCityFlow(int cityId, string cityName)
         {
             try
             {
-                // остановим таймер, чтобы он не перезапустил подсказки параллельно
                 _typingTimer.Stop();
 
                 _selectedCityId = cityId;

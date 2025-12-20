@@ -10,5 +10,13 @@ namespace BLL.Services
             var repo = new UserRepository();
             return new UserService(repo);
         }
+        public static ITicketService CreateTicketService()
+        {
+            return new TicketService();
+        }
+        public static IReportService CreateReportService()
+        {
+            return new ReportService(); // реализация ниже
+        }
     }
 }

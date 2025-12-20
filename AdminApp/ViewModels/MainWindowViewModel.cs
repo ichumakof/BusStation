@@ -19,11 +19,12 @@ namespace AdminApp.ViewModels
         public event EventHandler RequestOpenScheduleGenerator;
         public event EventHandler<MessageRequestEventArgs> RequestShowMessage;
         public event EventHandler RequestOpenUsers;
+        public event EventHandler RequestOpenReports;
 
         public MainWindowViewModel()
         {
             OpenScheduleGeneratorCommand = new RelayCommand(() => RequestOpenScheduleGenerator?.Invoke(this, EventArgs.Empty));
-            OpenReportsCommand = new RelayCommand(OpenReports);
+            OpenReportsCommand = new RelayCommand(() => RequestOpenReports?.Invoke(this, EventArgs.Empty));
             OpenTripsCommand = new RelayCommand(OpenTrips);
             OpenUsersCommand = new RelayCommand(() => RequestOpenUsers?.Invoke(this, EventArgs.Empty));
 
@@ -55,7 +56,7 @@ namespace AdminApp.ViewModels
 
         private void OpenReports()
         {
-            RequestShowMessage?.Invoke(this, new MessageRequestEventArgs { Message = "Модуль отчетов в разработке", Caption = "Информация", Icon = MessageBoxImage.Information });
+            RequestOpenReports?.Invoke(this, EventArgs.Empty);
         }
 
         private void OpenTrips()

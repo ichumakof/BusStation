@@ -258,5 +258,92 @@ namespace BLL.Services
                 return result;
             }
         }
+        public async Task<List<CityDTO>> GetAllCitiesAsync()
+        {
+            using (var db = CreateContext())
+            {
+                return await db.Cities
+                    .OrderBy(c => c.CityName)
+                    .Select(c => new CityDTO { CityID = c.CityID, CityName = c.CityName })
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+
+        public async Task<TicketReportResult> GetTicketsReportAsync(DateTime from, DateTime to, IList<int> cityIds = null)
+        {
+            // Нормализуем границы: from at 00:00:00, to at 23:59:59.999...
+            var fromDt = from.Date;
+            var toDt = to.Date.AddDays(1).AddTicks(-1);
+
+            using (var db = CreateContext())
+            {
+                // Собираем минимальный набор данных: Trip -> Route -> City
+                var query = from t in db.Tickets
+                            join tr in db.Trips on t.TripID equals tr.TripID into trj
+                            from tr in trj.DefaultIfEmpty()
+                            join r in db.Routes on tr.RouteID equals r.RouteID into rj
+                            from r in rj.DefaultIfEmpty()
+                            join c in db.Cities on r.ArrivalPointID equals c.CityID into cj
+                            from c in cj.DefaultIfEmpty()
+                            where t.PurchaseDateTime >= fromDt && t.PurchaseDateTime <= toDt
+                            select new
+                            {
+                                Ticket = t,
+                                Trip = tr,
+                                Route = r,
+                                City = c
+                            };
+
+                // Применяем фильтр по выбранным городам (если указан)
+                if (cityIds != null && cityIds.Any())
+                {
+                    query = query.Where(x => x.City != null && cityIds.Contains(x.City.CityID));
+                }
+
+                var raw = await query
+                            .Select(x => new
+                            {
+                                RouteID = (int?)(x.Route != null ? (int?)x.Route.RouteID : null),
+                                CityID = (int?)(x.City != null ? (int?)x.City.CityID : null),
+                                CityName = x.City != null ? x.City.CityName : null,
+                                Status = x.Ticket.Status,
+                                Price = (double?)x.Ticket.Price
+                            })
+                            .ToListAsync()
+                            .ConfigureAwait(false);
+
+                // Группировка по маршруту (RouteID). Если RouteID == null, положим 0.
+                var groups = raw
+                    .GroupBy(r => r.RouteID ?? 0)
+                    .Select(g =>
+                    {
+                        var any = g.FirstOrDefault();
+                        var cityName = any?.CityName ?? "неизвестно";
+                        return new TicketReportItem
+                        {
+                            RouteID = g.Key,
+                            RouteTitle = $"Иваново - {cityName}",
+                            SoldCount = g.Count(x => x.Status == "Sold"),
+                            ReturnedCount = g.Count(x => x.Status == "Returned"),
+                            EarnedSum = g.Where(x => x.Status == "Sold").Sum(x => x.Price ?? 0)
+                        };
+                    })
+                    .OrderByDescending(i => i.SoldCount)
+                    .ToList();
+
+                var result = new TicketReportResult
+                {
+                    From = fromDt,
+                    To = toDt,
+                    Items = groups,
+                    TotalSold = groups.Sum(i => i.SoldCount),
+                    TotalReturned = groups.Sum(i => i.ReturnedCount),
+                    TotalEarned = groups.Sum(i => i.EarnedSum)
+                };
+
+                return result;
+            }
+        }
     }
 }

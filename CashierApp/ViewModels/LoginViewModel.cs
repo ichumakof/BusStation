@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BLL.Interfaces; // IAuthService
-using BLL.Models;    // UserDTO
+using BLL.Interfaces;
+using BLL.Models;
 
 namespace CashierApp.ViewModels
 {
