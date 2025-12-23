@@ -1,13 +1,14 @@
-﻿using System;
+﻿using BLL.Interfaces;
+using BLL.Models;
+using DAL;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using BLL.Interfaces;
-using BLL.Models;
-using DAL;
 
 namespace BLL.Services
 {
@@ -94,7 +95,7 @@ namespace BLL.Services
                     }
 
                     if (capacity <= 0)
-                        throw new InvalidOperationException("Не удалось определить вместимость автобуса для рейса (capacity). Проверьте данные Buses/Trips.");
+                        throw new InvalidOperationException("Не удалось определить вместимость автобуса для рейса (capacity). Проверьте данные.");
 
                     int free = capacity - occupiedSeatNumbers.Count;
                     if (free < request.Quantity)
@@ -272,48 +273,43 @@ namespace BLL.Services
 
         public async Task<TicketReportResult> GetTicketsReportAsync(DateTime from, DateTime to, IList<int> cityIds = null)
         {
-            // Нормализуем границы: from at 00:00:00, to at 23:59:59.999...
             var fromDt = from.Date;
-            var toDt = to.Date.AddDays(1).AddTicks(-1);
+            var toExclusive = to.Date.AddDays(1).AddMinutes(-1);
 
             using (var db = CreateContext())
             {
-                // Собираем минимальный набор данных: Trip -> Route -> City
-                var query = from t in db.Tickets
-                            join tr in db.Trips on t.TripID equals tr.TripID into trj
-                            from tr in trj.DefaultIfEmpty()
-                            join r in db.Routes on tr.RouteID equals r.RouteID into rj
-                            from r in rj.DefaultIfEmpty()
-                            join c in db.Cities on r.ArrivalPointID equals c.CityID into cj
-                            from c in cj.DefaultIfEmpty()
-                            where t.PurchaseDateTime >= fromDt && t.PurchaseDateTime <= toDt
-                            select new
-                            {
-                                Ticket = t,
-                                Trip = tr,
-                                Route = r,
-                                City = c
-                            };
+                var baseQuery =
+                    from t in db.Tickets
+                    join tr in db.Trips on t.TripID equals tr.TripID
+                    join r in db.Routes on tr.RouteID equals r.RouteID into rj
+                    from r in rj.DefaultIfEmpty()
+                    join c in db.Cities on r.ArrivalPointID equals c.CityID into cj
+                    from c in cj.DefaultIfEmpty()
+                    select new
+                    {
+                        Route = r,
+                        City = c,
+                        Price = (double?)t.Price,
+                        TripDeparture = (DateTime?)tr.DepartureDateTime
+                    };
 
-                // Применяем фильтр по выбранным городам (если указан)
                 if (cityIds != null && cityIds.Any())
                 {
-                    query = query.Where(x => x.City != null && cityIds.Contains(x.City.CityID));
+                    baseQuery = baseQuery.Where(x => x.City != null && cityIds.Contains(x.City.CityID));
                 }
 
-                var raw = await query
-                            .Select(x => new
-                            {
-                                RouteID = (int?)(x.Route != null ? (int?)x.Route.RouteID : null),
-                                CityID = (int?)(x.City != null ? (int?)x.City.CityID : null),
-                                CityName = x.City != null ? x.City.CityName : null,
-                                Status = x.Ticket.Status,
-                                Price = (double?)x.Ticket.Price
-                            })
-                            .ToListAsync()
-                            .ConfigureAwait(false);
+                var filtered = baseQuery.Where(x => x.TripDeparture.HasValue && x.TripDeparture.Value >= fromDt && x.TripDeparture.Value < toExclusive);
 
-                // Группировка по маршруту (RouteID). Если RouteID == null, положим 0.
+                var raw = await filtered
+                    .Select(x => new
+                    {
+                        RouteID = (int?)(x.Route != null ? (int?)x.Route.RouteID : null),
+                        CityName = x.City != null ? x.City.CityName : null,
+                        Price = x.Price,
+                        DepartureDate = x.TripDeparture
+                    })
+                    .ToListAsync();
+
                 var groups = raw
                     .GroupBy(r => r.RouteID ?? 0)
                     .Select(g =>
@@ -324,9 +320,9 @@ namespace BLL.Services
                         {
                             RouteID = g.Key,
                             RouteTitle = $"Иваново - {cityName}",
-                            SoldCount = g.Count(x => x.Status == "Sold"),
-                            ReturnedCount = g.Count(x => x.Status == "Returned"),
-                            EarnedSum = g.Where(x => x.Status == "Sold").Sum(x => x.Price ?? 0)
+                            SoldCount = g.Count(),                 // все билеты в интервале
+                            ReturnedCount = 0,                     
+                            EarnedSum = g.Sum(x => x.Price ?? 0)   // сумма цен
                         };
                     })
                     .OrderByDescending(i => i.SoldCount)
@@ -335,7 +331,7 @@ namespace BLL.Services
                 var result = new TicketReportResult
                 {
                     From = fromDt,
-                    To = toDt,
+                    To = toExclusive,
                     Items = groups,
                     TotalSold = groups.Sum(i => i.SoldCount),
                     TotalReturned = groups.Sum(i => i.ReturnedCount),

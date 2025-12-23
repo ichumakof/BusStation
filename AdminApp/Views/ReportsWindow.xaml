@@ -31,7 +31,7 @@
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Сформировать PDF" Command="{Binding GenerateReportCommand}" Margin="5" Padding="10,6"/>
-            <Button Content="Закрыть" Command="{Binding CloseCommand}" Margin="5" Padding="10,6"/>
+            <Button Content="Закрыть" Command="{Binding CancelCommand}" Margin="5" Padding="10,6"/>
         </StackPanel>
     </Grid>
 </Window>

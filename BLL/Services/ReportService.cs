@@ -26,14 +26,13 @@ namespace BLL.Services
                 title.Format.SpaceAfter = Unit.FromCentimeter(0.5);
 
                 sec.AddParagraph($"Период: {report.From:dd.MM.yyyy} — {report.To:dd.MM.yyyy}");
-                sec.AddParagraph($"Дата отчёта: {DateTime.Now:dd.MM.yyyy HH:mm:ss}");
+                sec.AddParagraph($"Дата формирования отчёта: {DateTime.Now:dd.MM.yyyy HH:mm:ss}");
                 sec.AddParagraph();
 
                 var p = sec.AddParagraph();
                 p.Format.Font.Size = 12;
                 p.AddFormattedText("Общая сводка:", TextFormat.Bold);
                 sec.AddParagraph($"Всего продано билетов: {report.TotalSold}");
-                sec.AddParagraph($"Всего возвращено билетов: {report.TotalReturned}");
                 sec.AddParagraph($"Заработано: {report.TotalEarned:F2}");
                 sec.AddParagraph();
 
@@ -47,12 +46,21 @@ namespace BLL.Services
                 table.AddColumn(Unit.FromCentimeter(3));
                 table.AddColumn(Unit.FromCentimeter(3));
                 table.AddColumn(Unit.FromCentimeter(4));
-
+                // временная диагностика — лог/Debug вывод
+                System.Diagnostics.Debug.WriteLine($"Report: From={report.From}, To={report.To}, TotalSold={report.TotalSold}, TotalReturned={report.TotalReturned}, TotalEarned={report.TotalEarned}");
+                if (report.Items != null)
+                {
+                    foreach (var it in report.Items)
+                        System.Diagnostics.Debug.WriteLine($"Item: RouteId={it.RouteID}, RouteTitle='{it.RouteTitle}', Sold={it.SoldCount}, Returned={it.ReturnedCount}, Earned={it.EarnedSum}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Report.Items == null");
+                }
                 var header = table.AddRow();
                 header.Shading.Color = Colors.LightGray;
                 header.Cells[0].AddParagraph("Маршрут");
                 header.Cells[1].AddParagraph("Продано");
-                header.Cells[2].AddParagraph("Возвращено");
                 header.Cells[3].AddParagraph("Заработано");
 
                 if (report.Items != null)
@@ -62,7 +70,6 @@ namespace BLL.Services
                         var row = table.AddRow();
                         row.Cells[0].AddParagraph(item.RouteTitle);
                         row.Cells[1].AddParagraph(item.SoldCount.ToString());
-                        row.Cells[2].AddParagraph(item.ReturnedCount.ToString());
                         row.Cells[3].AddParagraph(item.EarnedSum.ToString("F2"));
                     }
                 }
@@ -71,10 +78,22 @@ namespace BLL.Services
                 var renderer = new PdfDocumentRenderer(true) { Document = doc };
                 renderer.RenderDocument();
 
+                // Создаём папку только если в outputPath есть путь
                 var dir = Path.GetDirectoryName(outputPath);
-                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                if (!string.IsNullOrWhiteSpace(dir))
+                {
+                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                }
 
-                renderer.PdfDocument.Save(outputPath);
+                // Сохраняем PDF — оборачиваем в try, чтобы вернуть полезный текст ошибки вызывающему коду
+                try
+                {
+                    renderer.PdfDocument.Save(outputPath);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Не удалось сохранить PDF по пути '{outputPath}': {ex.Message}", ex);
+                }
             });
         }
     }
