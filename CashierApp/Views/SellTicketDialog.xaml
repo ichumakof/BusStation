@@ -18,48 +18,48 @@
         </Grid.ColumnDefinitions>
 
         <!-- Инфо о рейсе -->
-        <TextBlock Text="Маршрут:" FontWeight="Bold" />
-        <TextBlock Grid.Column="1" Text="{Binding Trip.RouteTitle}" Margin="8,0,0,0" />
+        <TextBlock Text="Маршрут:" FontSize="16" />
+        <TextBlock Grid.Column="1" Text="{Binding Trip.RouteTitle}" Margin="8,0,0,0" FontSize="16" />
 
-        <TextBlock Grid.Row="1" Text="Отправление:" FontWeight="Bold" />
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Trip.DepartureTime}" Margin="8,0,0,0" />
+        <TextBlock Grid.Row="1" Text="Отправление:" FontSize="16" />
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Trip.DepartureTime}" Margin="8,0,0,0" FontSize="16" />
 
-        <TextBlock Grid.Row="2" Text="Свободных мест:" FontWeight="Bold" />
+        <TextBlock Grid.Row="2" Text="Свободных мест:" FontSize="16" />
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="8,0,0,0">
-            <TextBlock Text="{Binding AvailableSeats}" />
-            <TextBlock Text="   Цена за билет: " Margin="12,0,0,0"/>
-            <TextBlock Text="{Binding PricePerTicket}" />
-            <TextBlock Text=" руб." />
+            <TextBlock Text="{Binding AvailableSeats}" FontSize="16" />
+            <TextBlock Text="   Цена за билет: " Margin="12,0,0,0" FontSize="16"/>
+            <TextBlock Text="{Binding PricePerTicket}" FontSize="16" />
+            <TextBlock Text=" руб." FontSize="16" />
         </StackPanel>
 
         <!-- Основная панель -->
         <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,12,0,0" Orientation="Vertical">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <TextBlock Text="Количество:" VerticalAlignment="Center" Width="110" />
-                <Button Content="-" Width="28" Click="Decrement_Click"/>
+                <TextBlock Text="Количество:" VerticalAlignment="Center" Width="110" FontSize="16" />
+                <Button Content="-" Width="28" Click="Decrement_Click" FontSize="16" FontWeight="Bold"/>
                 <TextBox Width="60" Margin="8,0" HorizontalContentAlignment="Center"
-                         Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Content="+" Width="28" Click="Increment_Click"/>
-                <TextBlock Text="  из " VerticalAlignment="Center" Margin="12,0,0,0"/>
-                <TextBlock Text="{Binding AvailableSeats}" VerticalAlignment="Center"/>
+                         Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" FontSize="16"/>
+                <Button Content="+" Width="28" Click="Increment_Click" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Text="  из " VerticalAlignment="Center" Margin="12,0,0,0" FontSize="16"/>
+                <TextBlock Text="{Binding AvailableSeats}" VerticalAlignment="Center" Width="100" FontSize="16"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                <TextBlock Text="Оплата:" VerticalAlignment="Center" Width="110"/>
-                <ComboBox Width="220" ItemsSource="{Binding PaymentTypes}" SelectedItem="{Binding SelectedPaymentType}" />
+                <TextBlock Text="Оплата:" VerticalAlignment="Center" Width="110" FontSize="16"/>
+                <ComboBox Width="220" ItemsSource="{Binding PaymentTypes}" SelectedItem="{Binding SelectedPaymentType}" FontSize="16" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Итого:" FontWeight="Bold" Width="110" VerticalAlignment="Center"/>
-                <TextBlock Text="{Binding TotalPrice}" FontWeight="Bold" VerticalAlignment="Center"/>
-                <TextBlock Text=" руб." Margin="4,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Итого:" FontWeight="Bold" Width="68" VerticalAlignment="Center" FontSize="16"/>
+                <TextBlock Text="{Binding TotalPrice}" FontWeight="Bold" VerticalAlignment="Center" FontSize="16"/>
+                <TextBlock Text=" руб." Margin="4,0,0,0" VerticalAlignment="Center" FontSize="16"/>
             </StackPanel>
         </StackPanel>
 
         <!-- Кнопки -->
         <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
-            <Button Content="Оформить" Width="110" Margin="0,0,8,0" Command="{Binding ConfirmCommand}" />
-            <Button Content="Отмена" Width="90" Command="{Binding CancelCommand}" />
+            <Button Content="Оформить" Width="110" Margin="0,0,8,0" Command="{Binding ConfirmCommand}" FontSize="16" />
+            <Button Content="Отмена" Width="90" Command="{Binding CancelCommand}" FontSize="16" />
         </StackPanel>
     </Grid>
 </Window>

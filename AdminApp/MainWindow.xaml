@@ -46,17 +46,16 @@
             </Grid.ColumnDefinitions>
 
             <!-- 2.1 Меню слева -->
-            <Border Grid.Column="0" Background="#ffffff" BorderBrush="#ddd" BorderThickness="0,0,1,0">
+            <Border Grid.Column="0" Background="#ffffff" BorderBrush="#ddd" BorderThickness="0,0,1,0" Grid.ColumnSpan="2" Margin="0,0,515,0">
                 <StackPanel Margin="10">
                     <TextBlock Text="ГЛАВНОЕ МЕНЮ" 
                               FontWeight="Bold" 
                               FontSize="16"
-                              Margin="0,0,0,30"
-                              HorizontalAlignment="Center"/>
+                              HorizontalAlignment="Center" Margin="0,20,0,20"/>
 
                     <!-- 4 кнопки -->
-                    <Button x:Name="btnScheduleGenerator" 
-                           Content="📅 Генератор расписания"
+                    <Button x:Name="btnScheduleGenerator"
+                           Content="📅 Генерация рейсов"
                            Style="{StaticResource MenuButtonStyle}"
                            Command="{Binding OpenScheduleGeneratorCommand}"/>
 
@@ -65,13 +64,13 @@
                            Style="{StaticResource MenuButtonStyle}"
                            Command="{Binding OpenReportsCommand}"/>
 
-                    <Button x:Name="btnTrips" 
-                           Content="🚌 Управление рейсами"
+                    <Button x:Name="btnRoutes" 
+                           Content="🚌 Создание маршрутов"
                            Style="{StaticResource MenuButtonStyle}"
                            Command="{Binding OpenTripsCommand}"/>
 
                     <Button x:Name="btnUsers" 
-                           Content="👥 Управление сотрудниками"
+                           Content="👥 Управление персоналом"
                            Style="{StaticResource MenuButtonStyle}"
                            Command="{Binding OpenUsersCommand}"/> 
                 </StackPanel>

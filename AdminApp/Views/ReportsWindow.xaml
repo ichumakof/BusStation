@@ -9,15 +9,23 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Период: " VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <DatePicker SelectedDate="{Binding FromDate}" Width="140"/>
+        
+        <Border Grid.Row="0" Background="#2196F3" Padding="15" Grid.ColumnSpan="3" Margin="0,0,0,325" Grid.RowSpan="2">
+            <TextBlock Text="ОТЧЕТЫ ПО ПРОДАЖАМ" 
+              Foreground="White" 
+              FontSize="18" 
+              FontWeight="Bold"
+              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        
+        <StackPanel Orientation="Horizontal" Margin="0,105,0,10">
+            <TextBlock Text="Период: " VerticalAlignment="Center" Margin="0,0,10,0" FontSize="16"/>
+            <DatePicker SelectedDate="{Binding FromDate}" Width="140" FontSize="16"/>
             <TextBlock Text="—" VerticalAlignment="Center" Margin="10,0"/>
-            <DatePicker SelectedDate="{Binding ToDate}" Width="140" />
+            <DatePicker SelectedDate="{Binding ToDate}" Width="140" FontSize="16" />
         </StackPanel>
 
-        <GroupBox Header="Выберите города (назначения)" Grid.Row="1" Margin="0,0,0,10">
+        <GroupBox Header="Выберите города назначения" Grid.Row="1" Margin="0,0,0,10" FontSize="16">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Height="300">
                 <ItemsControl ItemsSource="{Binding Cities}">
                     <ItemsControl.ItemTemplate>
@@ -30,8 +38,8 @@
         </GroupBox>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Сформировать PDF" Command="{Binding GenerateReportCommand}" Margin="5" Padding="10,6"/>
-            <Button Content="Закрыть" Command="{Binding CancelCommand}" Margin="5" Padding="10,6"/>
+            <Button Content="Сформировать отчет" Command="{Binding GenerateReportCommand}" Margin="5" Padding="10,6" FontSize="16"/>
+            <Button Content="Закрыть" Command="{Binding CancelCommand}" Margin="5" Padding="10,6" FontSize="16"/>
         </StackPanel>
     </Grid>
 </Window>

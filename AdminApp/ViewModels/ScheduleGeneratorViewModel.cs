@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using BLL.Interfaces;
 using BLL.Models;
+using AdminApp.Commons;
 
 namespace AdminApp.ViewModels
 {
@@ -36,13 +37,9 @@ namespace AdminApp.ViewModels
             CancelCommand = new RelayCommand(() => RequestClose?.Invoke(this, false));
         }
 
-        #region Events
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<MessageRequestEventArgs> RequestShowMessage;
         public event EventHandler<bool> RequestClose; // true = success/ok, false = cancelled
-        #endregion
-
-        #region Collections / Bindable props
 
         public ObservableCollection<RouteDTO> Routes { get; }
         public ObservableCollection<object> Drivers { get; }
@@ -90,14 +87,9 @@ namespace AdminApp.ViewModels
         private bool _isBusy;
         public bool IsBusy { get => _isBusy; private set { if (_isBusy != value) { _isBusy = value; OnProp(nameof(IsBusy)); } } }
 
-        #endregion
-
-        #region Commands
         public ICommand GenerateCommand { get; }
         public ICommand CancelCommand { get; }
-        #endregion
 
-        #region Init / Load
 
         // Загружает справочники в коллекции (вызывается из View)
         public async Task InitializeAsync()
@@ -188,10 +180,6 @@ namespace AdminApp.ViewModels
             }
             catch { return null; }
         }
-
-        #endregion
-
-        #region Generate / Validate
 
         private string ValidateRequest(ScheduleGenerationRequest request)
         {
@@ -290,10 +278,6 @@ namespace AdminApp.ViewModels
             if (Sunday) yield return DayOfWeek.Sunday;
         }
 
-        #endregion
-
-        #region Helpers / Commands impl
-
         protected void OnProp(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public class RelayCommand : ICommand
@@ -330,7 +314,5 @@ namespace AdminApp.ViewModels
             }
             public event EventHandler CanExecuteChanged { add { CommandManager.RequerySuggested += value; } remove { CommandManager.RequerySuggested -= value; } }
         }
-
-        #endregion
     }
 }

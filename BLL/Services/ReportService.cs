@@ -46,17 +46,7 @@ namespace BLL.Services
                 table.AddColumn(Unit.FromCentimeter(3));
                 table.AddColumn(Unit.FromCentimeter(3));
                 table.AddColumn(Unit.FromCentimeter(4));
-                // временная диагностика — лог/Debug вывод
-                System.Diagnostics.Debug.WriteLine($"Report: From={report.From}, To={report.To}, TotalSold={report.TotalSold}, TotalReturned={report.TotalReturned}, TotalEarned={report.TotalEarned}");
-                if (report.Items != null)
-                {
-                    foreach (var it in report.Items)
-                        System.Diagnostics.Debug.WriteLine($"Item: RouteId={it.RouteID}, RouteTitle='{it.RouteTitle}', Sold={it.SoldCount}, Returned={it.ReturnedCount}, Earned={it.EarnedSum}");
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("Report.Items == null");
-                }
+
                 var header = table.AddRow();
                 header.Shading.Color = Colors.LightGray;
                 header.Cells[0].AddParagraph("Маршрут");

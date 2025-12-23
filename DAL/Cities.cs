@@ -23,7 +23,7 @@ namespace DAL
     
         public int CityID { get; set; }
         public string CityName { get; set; }
-        public bool Region { get; set; }
+        public Nullable<bool> Region { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Routes> Routes { get; set; }

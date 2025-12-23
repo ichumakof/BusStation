@@ -81,10 +81,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commons\AsyncRelayCommand.cs" />
+    <Compile Include="Commons\BaseViewModel.cs" />
+    <Compile Include="Commons\MessageRequestEventArgs.cs" />
+    <Compile Include="Commons\RelayCommand.cs" />
     <Compile Include="Helpers\PasswordBoxHelper.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ReportsViewModel.cs" />
+    <Compile Include="ViewModels\RoutesViewModel.cs" />
     <Compile Include="ViewModels\ScheduleGeneratorViewModel.cs" />
     <Compile Include="ViewModels\UserEditViewModel.cs" />
     <Compile Include="ViewModels\UsersViewModel.cs" />
@@ -93,6 +98,9 @@
     </Compile>
     <Compile Include="Views\ReportsWindow.xaml.cs">
       <DependentUpon>ReportsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RoutesWindow.xaml.cs">
+      <DependentUpon>RoutesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ScheduleGeneratorView.xaml.cs">
       <DependentUpon>ScheduleGeneratorView.xaml</DependentUpon>
@@ -120,6 +128,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ReportsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RoutesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -169,6 +181,7 @@
       <Name>BLL</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

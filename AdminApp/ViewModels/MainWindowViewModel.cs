@@ -2,17 +2,10 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using AdminApp.Commons;
 
 namespace AdminApp.ViewModels
 {
-    public class MessageRequestEventArgs : EventArgs
-    {
-        public string Message { get; set; }
-        public string Caption { get; set; } = "";
-        public MessageBoxButton Button { get; set; } = MessageBoxButton.OK;
-        public MessageBoxImage Icon { get; set; } = MessageBoxImage.None;
-    }
-
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -20,12 +13,13 @@ namespace AdminApp.ViewModels
         public event EventHandler<MessageRequestEventArgs> RequestShowMessage;
         public event EventHandler RequestOpenUsers;
         public event EventHandler RequestOpenReports;
+        public event EventHandler RequestOpenRoutes;
 
         public MainWindowViewModel()
         {
             OpenScheduleGeneratorCommand = new RelayCommand(() => RequestOpenScheduleGenerator?.Invoke(this, EventArgs.Empty));
             OpenReportsCommand = new RelayCommand(() => RequestOpenReports?.Invoke(this, EventArgs.Empty));
-            OpenTripsCommand = new RelayCommand(OpenTrips);
+            OpenTripsCommand = new RelayCommand(() => RequestOpenRoutes?.Invoke(this, EventArgs.Empty));
             OpenUsersCommand = new RelayCommand(() => RequestOpenUsers?.Invoke(this, EventArgs.Empty));
 
             AdminName = GetAdminName();
@@ -54,31 +48,6 @@ namespace AdminApp.ViewModels
         public ICommand OpenTripsCommand { get; }
         public ICommand OpenUsersCommand { get; }
 
-        private void OpenReports()
-        {
-            RequestOpenReports?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void OpenTrips()
-        {
-            RequestShowMessage?.Invoke(this, new MessageRequestEventArgs { Message = "Модуль управления рейсами в разработке", Caption = "Информация", Icon = MessageBoxImage.Information });
-        }
-
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-        // Простая реализация RelayCommand
-        public class RelayCommand : ICommand
-        {
-            private readonly Action _execute;
-            private readonly Func<bool> _canExecute;
-            public RelayCommand(Action execute, Func<bool> canExecute = null)
-            {
-                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-                _canExecute = canExecute;
-            }
-            public bool CanExecute(object parameter) => _canExecute?.Invoke() ?? true;
-            public void Execute(object parameter) => _execute();
-            public event EventHandler CanExecuteChanged { add { CommandManager.RequerySuggested += value; } remove { CommandManager.RequerySuggested -= value; } }
-        }
     }
 }

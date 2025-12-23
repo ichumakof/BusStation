@@ -2,6 +2,7 @@
 using System.Windows;
 using CashierApp.ViewModels;
 using BLL.Interfaces;
+using CashierApp.Commons;
 
 namespace CashierApp.Views
 {
@@ -11,7 +12,7 @@ namespace CashierApp.Views
 
         public int SoldCount { get; private set; } = 0;
 
-        public SellTicketDialog(ITicketService ticketService, int currentUserId, CashierApp.ViewModels.CashierMainViewModel.TripItem trip)
+        public SellTicketDialog(ITicketService ticketService, int currentUserId, Commons.TripItem trip)
         {
             InitializeComponent();
 

@@ -1,0 +1,94 @@
+﻿<!-- RoutesWindow.xaml -->
+<Window x:Class="AdminApp.Views.RoutesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Создание маршрута" Height="336" Width="420"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
+            <RowDefinition Height="12"/>
+            <!-- Spacer -->
+            <RowDefinition Height="Auto"/>
+            <!-- City row -->
+            <RowDefinition Height="Auto"/>
+            <!-- Time & Distance -->
+            <RowDefinition Height="*"/>
+            <!-- Info / filler -->
+            <RowDefinition Height="Auto"/>
+            <!-- Buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="15" CornerRadius="4" Margin="0,0,0,6">
+            <TextBlock Text="СОЗДАНИЕ НОВОГО МАРШРУТА"
+                       Foreground="White"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- City row: label + textbox in two columns -->
+        <Grid Grid.Row="2" Margin="0,4,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <!-- Label column -->
+                <ColumnDefinition Width="*"/>
+                <!-- TextBox column -->
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="Новый город (название):"
+                       FontSize="16"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap" />
+
+            <TextBox Grid.Column="1"
+                     Text="{Binding CityName, UpdateSourceTrigger=PropertyChanged}"
+                     FontSize="16"
+                     VerticalAlignment="Center"
+                     Margin="10,0,0,0"
+                     HorizontalAlignment="Stretch" />
+        </Grid>
+
+        <!-- Time & Distance -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,6,0,0">
+            <StackPanel Width="240">
+                <TextBlock Text="Время в пути" FontSize="16" Margin="10,0,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                    <StackPanel>
+                        <TextBlock Text="Часы" FontSize="16" Margin="10,0,0,0" HorizontalAlignment="Left" />
+                        <TextBox Width="60" Margin="10,6,8,0"
+                                 Text="{Binding Hours, UpdateSourceTrigger=PropertyChanged}"
+                                 PreviewTextInput="NumberOnly_PreviewTextInput" FontSize="16"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Минуты" FontSize="16" />
+                        <TextBox Width="60" Margin="0,6,0,0"
+                                 Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}"
+                                 PreviewTextInput="NumberOnly_PreviewTextInput" FontSize="16"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="12,0,0,0" VerticalAlignment="Top">
+                <TextBlock Text="Расстояние (км)" FontSize="16" Margin="0,0,0,0"/>
+                <TextBox Width="120" Margin="0,6,0,0"
+                         Text="{Binding Distance, UpdateSourceTrigger=PropertyChanged}"
+                         PreviewTextInput="NumberOnly_PreviewTextInput" FontSize="16"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Info -->
+        <TextBlock Grid.Row="4" TextWrapping="Wrap" Foreground="Red"
+                   Text="{Binding Info}" FontSize="16" Margin="0,12,0,0" />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Width="90" Margin="6,0" Content="Отмена" Command="{Binding CancelCommand}" FontSize="16" />
+            <Button Width="147" Margin="6,0" Content="Создать маршрут" Command="{Binding SaveCommand}" FontSize="16" />
+        </StackPanel>
+    </Grid>
+</Window>

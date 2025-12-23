@@ -16,7 +16,11 @@ namespace BLL.Services
         }
         public static IReportService CreateReportService()
         {
-            return new ReportService(); // реализация ниже
+            return new ReportService();
+        }
+        public static IRouteManagerService CreateRouteManagerService()
+        {
+            return new RouteManagerService();
         }
     }
 }

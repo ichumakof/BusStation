@@ -4,6 +4,7 @@ using CashierApp.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using CashierApp.Commons;
 
 namespace CashierApp
 {
@@ -22,7 +23,6 @@ namespace CashierApp
             _vm.RequestShowMessage += Vm_RequestShowMessage;
             _vm.RequestOpenSellDialog += Vm_RequestOpenSellDialog;
 
-            // Обработчик клика вне подсказок — если у вас имена контролов другие, замените lbSuggestions/tbCitySearch на реальные
             this.PreviewMouseDown += (s, e) =>
             {
                 try
@@ -38,7 +38,7 @@ namespace CashierApp
             _ = _vm.LoadCitiesAsync();
         }
 
-        private void Vm_RequestOpenSellDialog(object sender, CashierMainViewModel.TripItem trip)
+        private void Vm_RequestOpenSellDialog(object sender, Commons.TripItem trip)
         {
             try
             {

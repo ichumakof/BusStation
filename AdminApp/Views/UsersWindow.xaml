@@ -12,15 +12,20 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
+        <!-- Заголовок -->
+        <Border Grid.Row="0" Background="#2196F3" Padding="15" CornerRadius="4" Margin="0,0,0,43">
+            <TextBlock Text="УПРАВЛЕНИЕ ПЕРСОНАЛОМ"
+                Foreground="White"
+                FontSize="24"
+                FontWeight="Bold"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Border>
         <!-- Верх: кнопка редактирования своих данных -->
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,90,0,0">
             <Button Content="Редактировать свои данные"
                     Width="220" Height="28"
-                    Command="{Binding EditSelfCommand}" />
-            <Button Content="Обновить"
-                    Width="110" Height="28" Margin="8,0,0,0"
-                    Command="{Binding RefreshCommand}" />
+                    Command="{Binding EditSelfCommand}" FontSize="16" />
         </StackPanel>
 
         <!-- Середина: список кассиров -->
@@ -29,9 +34,8 @@
                   SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  Margin="0,10,0,10">
+                  Margin="0,10,0,10" FontSize="16">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding UserID}" Width="70"/>
                 <DataGridTextColumn Header="Логин" Binding="{Binding Login}" Width="*"/>
                 <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="2*"/>
                 <DataGridTextColumn Header="Роль" Binding="{Binding RoleName}" Width="120"/>
@@ -40,9 +44,9 @@
 
         <!-- Низ: кнопки действий -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Удалить" Width="100" Command="{Binding DeleteCommand}"/>
-            <Button Content="Добавить" Width="100" Margin="8,0,0,0" Command="{Binding AddCommand}"/>
-            <Button Content="Редактировать" Width="120" Margin="8,0,0,0" Command="{Binding EditCommand}"/>
+            <Button Content="Удалить" Width="100" Command="{Binding DeleteCommand}" FontSize="16"/>
+            <Button Content="Добавить" Width="100" Margin="8,0,0,0" Command="{Binding AddCommand}" FontSize="16"/>
+            <Button Content="Редактировать" Width="120" Margin="8,0,0,0" Command="{Binding EditCommand}" FontSize="16"/>
         </StackPanel>
     </Grid>
 </Window>

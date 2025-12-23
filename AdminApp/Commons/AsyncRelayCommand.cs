@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace AdminApp.Common
+namespace AdminApp.Commons
 {
     public class AsyncRelayCommand : ICommand
     {

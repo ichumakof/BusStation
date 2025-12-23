@@ -20,7 +20,7 @@
           </Key>
           <Property Name="CityID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CityName" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="Region" Type="bit" Nullable="false" />
+          <Property Name="Region" Type="bit" />
         </EntityType>
         <EntityType Name="Drivers">
           <Key>
@@ -357,7 +357,7 @@
           </Key>
           <Property Name="CityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CityName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Region" Type="Boolean" Nullable="false" />
+          <Property Name="Region" Type="Boolean" />
           <NavigationProperty Name="Routes" Relationship="Self.FK_Routes_Cities" FromRole="Cities" ToRole="Routes" />
           <NavigationProperty Name="Stops" Relationship="Self.FK_Stops_Cities" FromRole="Cities" ToRole="Stops" />
         </EntityType>

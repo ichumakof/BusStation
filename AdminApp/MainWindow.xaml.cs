@@ -1,5 +1,6 @@
 ﻿using AdminApp.Views;
 using AdminApp.ViewModels;
+using AdminApp.Commons;
 using BLL.Interfaces;
 using BLL.Services;
 using System;
@@ -24,6 +25,7 @@ namespace AdminApp
             _vm.RequestShowMessage += Vm_RequestShowMessage;
             _vm.RequestOpenUsers += Vm_RequestOpenUsers;
             _vm.RequestOpenReports += Vm_RequestOpenReports;
+            _vm.RequestOpenRoutes += Vm_RequestOpenRoutes;
         }
 
         private void Vm_RequestShowMessage(object sender, MessageRequestEventArgs e)
@@ -39,7 +41,6 @@ namespace AdminApp
         }
         private void Vm_RequestOpenUsers(object sender, EventArgs e)
         {
-            // Пытаемся получить id текущего администратора
             int currentAdminId = 0;
             try
             {
@@ -60,6 +61,11 @@ namespace AdminApp
         private void Vm_RequestOpenReports(object sender, EventArgs e)
         {
             var wnd = new ReportsWindow { Owner = this };
+            wnd.ShowDialog();
+        }
+        private void Vm_RequestOpenRoutes(object sender, EventArgs e)
+        {
+            var wnd = new RoutesWindow { Owner = this };
             wnd.ShowDialog();
         }
     }

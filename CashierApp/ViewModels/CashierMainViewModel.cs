@@ -10,17 +10,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using CashierApp.Commons;
 
 namespace CashierApp.ViewModels
 {
-    public class MessageRequestEventArgs : EventArgs
-    {
-        public string Message { get; set; }
-        public string Caption { get; set; } = "";
-        public MessageBoxButton Button { get; set; } = MessageBoxButton.OK;
-        public MessageBoxImage Icon { get; set; } = MessageBoxImage.None;
-    }
-
     public class CashierMainViewModel : INotifyPropertyChanged
     {
         private readonly ILookupService _lookupService;
@@ -56,7 +49,6 @@ namespace CashierApp.ViewModels
             OpenSellDialogCommand = new RelayCommand<TripItem>(OnOpenSellDialog, t => t != null && (t.AvailableSeats < 0 || t.AvailableSeats > 0));
         }
 
-        #region Проперти
         private string _cashierName;
         public string CashierName
         {
@@ -117,14 +109,12 @@ namespace CashierApp.ViewModels
         }
 
         public ObservableCollection<TripItem> Trips { get; }
-        #endregion
 
-        #region Команды
         public ICommand KeyDownDownCommand { get; }
         public ICommand KeyDownEnterCommand { get; }
         public ICommand OpenSellDialogCommand { get; }
 
-        private void OnKeyDown_Down() { /* noop */ }
+        private void OnKeyDown_Down() { }
 
         private void OnKeyDown_Enter()
         {
@@ -152,9 +142,7 @@ namespace CashierApp.ViewModels
             if (trip == null) return;
             RequestOpenSellDialog?.Invoke(this, trip);
         }
-        #endregion
 
-        #region Города / рейсы
         public async Task LoadCitiesAsync()
         {
             try
@@ -322,7 +310,6 @@ namespace CashierApp.ViewModels
                 Application.Current.Dispatcher.Invoke(() => trip.AvailableSeats = -1);
             }
         }
-        #endregion
 
         private string GetCurrentUserName()
         {
@@ -338,66 +325,6 @@ namespace CashierApp.ViewModels
             catch { }
             return "";
         }
-
-        #region Вспомогательные классы и команды
-        public class TripItem : INotifyPropertyChanged
-        {
-            public int TripID { get; set; }
-            public string RouteTitle { get; set; }
-            public string ExtraInfo { get; set; }
-            public double Price { get; set; }
-            public string PriceText { get; set; }
-            public string DepartureTime { get; set; }
-
-            private int _availableSeats = -1;
-            public int AvailableSeats
-            {
-                get => _availableSeats;
-                set
-                {
-                    if (_availableSeats != value)
-                    {
-                        _availableSeats = value;
-                        OnPropertyChanged(nameof(AvailableSeats));
-                        OnPropertyChanged(nameof(AvailableSeatsText));
-                    }
-                }
-            }
-            public string AvailableSeatsText => AvailableSeats < 0 ? "..." : AvailableSeats.ToString();
-
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        public class RelayCommand : ICommand
-        {
-            private readonly Action _execute;
-            private readonly Func<bool> _canExecute;
-            public RelayCommand(Action execute, Func<bool> canExecute = null)
-            {
-                _execute = execute;
-                _canExecute = canExecute;
-            }
-            public bool CanExecute(object parameter) => _canExecute?.Invoke() ?? true;
-            public void Execute(object parameter) => _execute();
-            public event EventHandler CanExecuteChanged { add { CommandManager.RequerySuggested += value; } remove { CommandManager.RequerySuggested -= value; } }
-        }
-
-        public class RelayCommand<T> : ICommand
-        {
-            private readonly Action<T> _execute;
-            private readonly Func<T, bool> _canExecute;
-            public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
-            {
-                _execute = execute;
-                _canExecute = canExecute;
-            }
-            public bool CanExecute(object parameter) => _canExecute?.Invoke((T)parameter) ?? true;
-            public void Execute(object parameter) => _execute((T)parameter);
-            public event EventHandler CanExecuteChanged { add { CommandManager.RequerySuggested += value; } remove { CommandManager.RequerySuggested -= value; } }
-        }
-
         private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        #endregion
     }
 }

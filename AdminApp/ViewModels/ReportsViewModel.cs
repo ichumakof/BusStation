@@ -1,5 +1,4 @@
-﻿// AdminApp/ViewModels/ReportsViewModel.cs
-using BLL.Interfaces;
+﻿using BLL.Interfaces;
 using BLL.Models;
 using BLL.Services;
 using System;
@@ -8,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
+using AdminApp.Commons;
 using System.Windows.Input;
 
 namespace AdminApp.ViewModels

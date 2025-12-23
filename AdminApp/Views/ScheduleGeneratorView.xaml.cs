@@ -40,7 +40,7 @@ namespace AdminApp.Views
             this.Close();
         }
 
-        private void Vm_RequestShowMessage(object sender, ViewModels.MessageRequestEventArgs e)
+        private void Vm_RequestShowMessage(object sender, Commons.MessageRequestEventArgs e)
         {
             MessageBox.Show(e.Message, e.Caption, e.Button, e.Icon);
         }
@@ -167,13 +167,8 @@ namespace AdminApp.Views
             // Подписываемся на изменения свойств IsBusy/InfoText, чтобы отображать в UI (если у вас есть tbInfo/pbProgress)
             _vm.PropertyChanged += (s, ev) =>
             {
-                if (ev.PropertyName == nameof(_vm.InfoText))
-                {
-                    if (tbInfo != null) tbInfo.Text = _vm.InfoText;
-                }
                 if (ev.PropertyName == nameof(_vm.IsBusy))
                 {
-                    if (pbProgress != null) pbProgress.Visibility = _vm.IsBusy ? Visibility.Visible : Visibility.Collapsed;
                     if (btnGenerate != null) btnGenerate.IsEnabled = !_vm.IsBusy;
                 }
             };

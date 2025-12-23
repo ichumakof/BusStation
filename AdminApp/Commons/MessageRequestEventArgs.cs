@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace AdminApp.Common
+namespace AdminApp.Commons
 {
     public class MessageRequestEventArgs : EventArgs
     {

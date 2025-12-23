@@ -81,6 +81,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commons\MessageRequestEventArgs.cs" />
+    <Compile Include="Commons\RelayCommand.cs" />
+    <Compile Include="Commons\TripItem.cs" />
     <Compile Include="Helpers\PasswordBoxHelper.cs" />
     <Compile Include="ViewModels\CashierMainViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />

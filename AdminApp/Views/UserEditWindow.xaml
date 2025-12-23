@@ -14,28 +14,28 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
-            <Label Content="Логин:" Width="100" VerticalAlignment="Center"/>
-            <TextBox Text="{Binding User.Login, UpdateSourceTrigger=PropertyChanged}" Width="260"/>
+            <Label Content="Логин:" Width="100" VerticalAlignment="Center" FontSize="16"/>
+            <TextBox Text="{Binding User.Login, UpdateSourceTrigger=PropertyChanged}" Width="260" FontSize="16"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,6">
-            <Label Content="ФИО:" Width="100" VerticalAlignment="Center"/>
-            <TextBox Text="{Binding User.FullName, UpdateSourceTrigger=PropertyChanged}" Width="260"/>
+            <Label Content="ФИО:" Width="100" VerticalAlignment="Center" FontSize="16"/>
+            <TextBox Text="{Binding User.FullName, UpdateSourceTrigger=PropertyChanged}" Width="260" FontSize="16"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,6">
-            <Label Content="Роль:" Width="100" VerticalAlignment="Center"/>
-            <TextBox Text="{Binding User.RoleName}" Width="260" IsReadOnly="True"/>
+            <Label Content="Роль:" Width="100" VerticalAlignment="Center" FontSize="16"/>
+            <TextBox Text="{Binding User.RoleName}" Width="260" IsReadOnly="True" FontSize="16"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,6">
-            <Label Content="Пароль:" Width="100" VerticalAlignment="Center"/>
-            <PasswordBox x:Name="pwdBox" Width="260"/>
+            <Label Content="Новый пароль:" Width="128" VerticalAlignment="Center" FontSize="16"/>
+            <PasswordBox x:Name="pwdBox" Width="232" FontSize="16"/>
         </StackPanel>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-            <Button Content="OK" Width="90" Margin="0,0,8,0" IsDefault="True" Click="Ok_Click"/>
-            <Button Content="Отмена" Width="90" IsCancel="True"/>
+            <Button Content="Подтвердить" Width="118" Margin="0,0,8,0" IsDefault="True" Click="Ok_Click" FontSize="16"/>
+            <Button Content="Отмена" Width="90" IsCancel="True" FontSize="16" Margin="0,0,30,0"/>
         </StackPanel>
     </Grid>
 </Window>

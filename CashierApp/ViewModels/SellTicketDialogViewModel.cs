@@ -8,6 +8,7 @@ using System.Windows.Input;
 using BLL.Interfaces;
 using BLL.Models;
 using BLL.Services;
+using CashierApp.Commons;
 
 namespace CashierApp.ViewModels
 {
@@ -20,7 +21,7 @@ namespace CashierApp.ViewModels
         // Папка, куда сохранять билеты
         private readonly string _ticketsFolder = @"C:\Users\ichum\Desktop\игэ(у)\5 семестр\Конструирование ПО\БИЛЕТЫ";
 
-        public SellTicketDialogViewModel(ITicketService ticketService, int currentUserId, CashierMainViewModel.TripItem trip)
+        public SellTicketDialogViewModel(ITicketService ticketService, int currentUserId, Commons.TripItem trip)
         {
             _ticketService = ticketService ?? throw new ArgumentNullException(nameof(ticketService));
             _currentUserId = currentUserId;
@@ -41,7 +42,7 @@ namespace CashierApp.ViewModels
         public event EventHandler<MessageBoxEventArgs> RequestShowMessage;
         public event EventHandler<bool> RequestClose;
 
-        public CashierMainViewModel.TripItem Trip { get; }
+        public Commons.TripItem Trip { get; }
 
         private int _availableSeats;
         public int AvailableSeats { get => _availableSeats; set { _availableSeats = value; OnProp(nameof(AvailableSeats)); OnProp(nameof(TotalPrice)); } }

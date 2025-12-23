@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Title="Генератор расписания рейсов" 
-        Height="650" Width="700"
+        Height="693" Width="700"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
@@ -19,18 +19,20 @@
         </Grid.RowDefinitions>
 
         <!-- Заголовок -->
-        <TextBlock Grid.Row="0" 
-                   Text="ГЕНЕРАЦИЯ РАСПИСАНИЯ РЕЙСОВ"
-                   FontSize="18"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0,0,0,20"/>
+        <Border Grid.Row="0" Background="#2196F3" Padding="15" CornerRadius="4" Margin="0,0,0,6">
+            <TextBlock Text="ГЕНЕРАЦИЯ НОВЫХ РЕЙСОВ"
+               Foreground="White"
+               FontSize="18"
+               FontWeight="Bold"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
+        </Border>
 
         <!-- Основная форма -->
         <StackPanel Grid.Row="1">
 
             <!-- 1. Выбор маршрута -->
-            <GroupBox Header="Выбор маршрута" Margin="0,0,0,10">
+            <GroupBox Header="Выбор маршрута" Margin="0,0,0,10" FontSize="16">
                 <StackPanel Margin="10">
                     <Label Content="Маршрут:"/>
                     <ComboBox x:Name="cbRoutes" 
@@ -43,7 +45,7 @@
             </GroupBox>
 
             <!-- 2. Период генерации + время -->
-            <GroupBox Header="Период генерации" Margin="0,0,0,10">
+            <GroupBox Header="Период генерации" Margin="0,0,0,10" FontSize="16">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -57,7 +59,7 @@
                     </Grid.ColumnDefinitions>
                     <!-- Дата начала -->
                     <Label Grid.Row="0" Grid.Column="0" Content="Дата начала:" Width="100" VerticalAlignment="Center"/>
-                    <DatePicker x:Name="dpStartDate" Grid.Row="0" Grid.Column="1" Width="150" SelectedDate="{Binding StartDate, Mode=TwoWay}" Margin="0,0,10,0"/>
+                    <DatePicker x:Name="dpStartDate" Grid.Row="0" Grid.Column="1" Width="150" SelectedDate="{Binding StartDate, Mode=TwoWay}"/>
                     <!-- Время отправления -->
                     <Label Grid.Row="0" Grid.Column="2" Content="Время отправления:" Margin="10,0,5,0" VerticalAlignment="Center"/>
                     <StackPanel Grid.Row="0" Grid.Column="3" Orientation="Horizontal">
@@ -74,7 +76,7 @@
             </GroupBox>
 
             <!-- 3. Дни недели -->
-            <GroupBox Header="Дни недели" Margin="0,0,0,10">
+            <GroupBox Header="Дни недели" Margin="0,0,0,10" FontSize="16">
                 <WrapPanel Margin="10">
                     <CheckBox x:Name="chkMonday" Content="Понедельник" Margin="5" IsChecked="{Binding Monday, Mode=TwoWay}"/>
                     <CheckBox x:Name="chkTuesday" Content="Вторник" Margin="5" IsChecked="{Binding Tuesday, Mode=TwoWay}"/>
@@ -87,7 +89,7 @@
             </GroupBox>
 
             <!-- 4. Ресурсы -->
-            <GroupBox Header="Ресурсы" Margin="0,0,0,10">
+            <GroupBox Header="Прочее" Margin="0,0,0,10" FontSize="16">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -119,39 +121,23 @@
                     <TextBox x:Name="tbPrice" Grid.Row="2" Grid.Column="1" Height="26" Text="{Binding PriceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
             </GroupBox>
-
-            <!-- 4. Информация о генерации -->
-            <Border Background="#f0f8ff" BorderBrush="#b0e0e6" BorderThickness="1" 
-                    CornerRadius="5" Padding="10" Margin="0,0,0,10">
-                <StackPanel>
-                    <TextBlock x:Name="tbInfo" 
-                              Text="{Binding InfoText}"
-                              TextWrapping="Wrap"/>
-                    <ProgressBar x:Name="pbProgress" 
-                                Height="10" 
-                                Margin="0,10,0,0"
-                                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
-                                IsIndeterminate="True"/>
-                </StackPanel>
-            </Border>
-
         </StackPanel>
 
         <!-- Кнопки -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button x:Name="btnGenerate" 
                    Content="Сгенерировать" 
-                   Width="120" Height="35"
+                   Width="134" Height="35"
                    Background="#4CAF50"
                    Foreground="White"
                    FontWeight="Bold"
                    Command="{Binding GenerateCommand}"
-                   Margin="0,0,10,0"/>
+                   Margin="0,0,10,0" FontSize="16"/>
 
             <Button x:Name="btnCancel" 
                    Content="Отмена" 
                    Width="120" Height="35"
-                   Command="{Binding CancelCommand}"/>
+                   Command="{Binding CancelCommand}" FontSize="16"/>
         </StackPanel>
 
     </Grid>

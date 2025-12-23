@@ -12,7 +12,7 @@ namespace AdminApp.ViewModels
         private readonly IAuthService _authService;
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public event EventHandler<bool> RequestClose; // true = ok, false = cancelled
+        public event EventHandler<bool> RequestClose;
 
         public LoginViewModel(IAuthService authService)
         {
